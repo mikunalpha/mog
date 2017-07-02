@@ -1,0 +1,13 @@
+﻿---
+path: github.com/mikunalpha/mog/api
+deps:
+  - loc: gopkg.in/gin-gonic/gin.v1
+    type: goget
+
+  - loc: gopkg.in/mgo.v2
+    type: goget
+  
+  - loc: https://github.com/dgrijalva/jwt-go.git
+    type: git
+    reference: master
+    path: github.com/dgrijalva/jwt-go
