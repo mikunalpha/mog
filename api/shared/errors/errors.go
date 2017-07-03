@@ -82,6 +82,16 @@ var DuplicateError Error = Error{
 	nil,
 }
 
+// AuthenticationError
+var AuthenticationError Error = Error{
+	ErrorInfo{
+		Code:    "AuthenticationError",
+		Message: "An error occurred because of unauthenticated operation.",
+	},
+	403,
+	nil,
+}
+
 // AuthorizationError
 var AuthorizationError Error = Error{
 	ErrorInfo{

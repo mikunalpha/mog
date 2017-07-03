@@ -29,8 +29,8 @@ func Authenticate() gin.HandlerFunc {
 			if encryptedTokenFromCookie != encryptedToken {
 				log.Println("Token from header and cookie are not same.")
 				c.JSON(
-					errors.AuthorizationError.Status,
-					errors.AuthorizationError.ReplaceMessage("Cannot validate your token."))
+					errors.AuthenticationError.Status,
+					errors.AuthenticationError.ReplaceMessage("Cannot validate your token."))
 				c.Abort()
 				return
 			}
@@ -40,8 +40,16 @@ func Authenticate() gin.HandlerFunc {
 			if err != nil {
 				log.Println("Error occured when decrypting token.", err)
 				c.JSON(
-					errors.AuthorizationError.Status,
-					errors.AuthorizationError.ReplaceMessage("Cannot identify your token."))
+					errors.AuthenticationError.Status,
+					errors.AuthenticationError.ReplaceMessage("Cannot identify your token."))
+				c.Abort()
+				return
+			}
+
+			if authInfo.Id == "" || authInfo.Role < auth.Anonymous {
+				c.JSON(
+					errors.AuthenticationError.Status,
+					errors.AuthenticationError.ReplaceMessage("Cannot identify invalid token."))
 				c.Abort()
 				return
 			}

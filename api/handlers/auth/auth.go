@@ -49,7 +49,7 @@ func PostLogin(c *gin.Context) {
 	ai.ExpiresAt = time.Now().Add(time.Hour * 24 * 90).Unix()
 	encryptedToken, err := auth.EncryptToken(ai)
 	if err != nil {
-		handlers.Abort(c, errors.AuthorizationError.SetOriginError(err))
+		handlers.Abort(c, errors.ServerError.SetOriginError(err))
 		return
 	}
 
@@ -71,8 +71,8 @@ func PostLogin(c *gin.Context) {
 func GetAuthInfo(c *gin.Context) {
 	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
 
-	if authInfo.Id == "" {
-		handlers.Abort(c, errors.NotFoundError)
+	if authInfo.Role < auth.Anonymous {
+		handlers.Abort(c, errors.AuthenticationError)
 		return
 	}
 

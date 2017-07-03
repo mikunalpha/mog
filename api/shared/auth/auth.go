@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	Anonymous int64 = 0
+	Anonymous int64 = 1
 	Admin     int64 = 9999
 )
 
