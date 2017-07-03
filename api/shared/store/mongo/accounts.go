@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/mikunalpha/mog/api/shared/store"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -63,10 +65,14 @@ func (s *accountsStore) FindByCredentials(username, password string) (*store.Acc
 
 	selector := bson.M{
 		"username": username,
-		"password": password,
 	}
 
 	err = findRetry(DefaultRetryTimes, s.collection, s.collection.Find(selector), &account)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(*account.Password), []byte(password))
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +109,13 @@ func (s *accountsStore) Create(account *store.Account) error {
 
 	newId := bson.NewObjectId().Hex()
 	account.Id = &newId
+
+	if account.Password == nil {
+		account.Password = new(string)
+	}
+	hashedPassword := string([]byte(*account.Password))
+
+	account.Password = &hashedPassword
 
 	now := time.Now().Unix()
 	account.CreatedAt = &now
