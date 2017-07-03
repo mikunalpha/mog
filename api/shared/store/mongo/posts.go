@@ -182,6 +182,13 @@ func (s *postsStore) CreateByAuthorId(authorId string, post *store.Post) error {
 	newId := bson.NewObjectId().Hex()
 	post.Id = &newId
 
+	if post.Title == nil {
+		title := "Unknown Post Title"
+		post.Title = &title
+	} else if *post.Title == "" {
+		*post.Title = "Unknown Post Title"
+	}
+
 	if post.Published == nil {
 		post.Published = new(bool)
 	}

@@ -3,6 +3,7 @@ package store
 // Post Model
 type Post struct {
 	Id        *string `bson:"_id" json:"id,omitempty"`
+	Title     *string `bson:"title" json:"title,omitempty"`
 	Content   *string `bson:"content" json:"content,omitempty"`
 	Published *bool   `bson:"published" json:"published,omitempty"`
 	UpdatedAt *int64  `bson:"updated_at" json:"updated_at,omitempty"`
