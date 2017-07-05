@@ -1,0 +1,4 @@
+export const RECEIVE_AUTH_INFO = 'RECEIVE_AUTH_INFO'
+export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+export const RECEIVE_POST = 'RECEIVE_POST'
+export const CLEAR_POST = 'CLEAR_POST'
