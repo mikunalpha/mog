@@ -12,7 +12,7 @@
         type="secondary"
         color="white"
         icon="save"
-        @click="">
+        @click="save">
       </ui-icon-button>
     </template>
   </div>
@@ -32,7 +32,21 @@ export default {
   methods: {
     ...mapActions({
       getAuthInfo: 'getAuthInfo'
-    })
+    }),
+
+    // communicate with content
+    in ({cmd, data}) {
+      if (cmd === 'savePost') {
+        this.savePost(data)
+      }
+    },
+
+    save () {
+      this.$emit('channel', {cmd: 'savePost'})
+    },
+    savePost (data) {
+      console.log(data.content)
+    }
   },
 
   mounted () {

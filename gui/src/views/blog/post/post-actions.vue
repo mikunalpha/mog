@@ -14,6 +14,13 @@
         icon="edit"
         @click="edit">
       </ui-icon-button>
+      
+      <ui-icon-button
+        type="secondary"
+        color="white"
+        icon="delete"
+        @click="">
+      </ui-icon-button>
     </template>
 
     <template v-else-if="mode === 'edit' && authInfo.role === roles.Admin">

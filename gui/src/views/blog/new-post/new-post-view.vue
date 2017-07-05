@@ -1,6 +1,13 @@
 <template>
   <div id="new-post-view">
     <div class="wrap edit">
+      <div class="published">
+        <ui-switch
+          label="Published"
+          v-model="newPost.published">
+        </ui-switch>
+      </div>
+
       <input
         class="title"
         type="text"
@@ -28,10 +35,6 @@ import { quillEditor } from 'vue-quill-editor'
 export default {
   data () {
     return {
-      newPost: {
-        title: '',
-        content: ''
-      },
       quillEditorOptions: {
         modules: {
           // toolbar: '#editor-toolbar'
@@ -45,7 +48,13 @@ export default {
             ['clean']
           ]
         }
-      }
+      },
+      newPost: {
+        title: '',
+        content: '',
+        published: false
+      },
+      savePostTimeoutHolder: null
     }
   },
 
@@ -63,7 +72,27 @@ export default {
   methods: {
     ...mapActions({
       getAuthInfo: 'getAuthInfo'
-    })
+    }),
+
+    // communicate with actions button
+    in ({cmd, data}) {
+      if (cmd === 'savePost') {
+        this.newPostChange()
+      }
+    },
+
+    newPostChange () {
+      let t = this
+
+      if (t.savePostTimeoutHolder !== null) {
+        clearTimeout(t.savePostTimeoutHolder)
+      }
+
+      t.savePostTimeoutHolder = setTimeout(() => {
+        t.$emit('channel', {cmd: 'savePost', data: t.newPost})
+        t.savePostTimeoutHolder = null
+      }, 120)
+    }
   },
 
   mounted () {
@@ -85,6 +114,16 @@ export default {
     max-width: 940px
     background-color: #ffffff
   .wrap.edit
+    position: relative
+    .published
+      position: absolute
+      top: 10px
+      right: 25px
+      // width: 120px
+      .ui-switch__thumb
+        z-index: 1
+      .ui-switch__track
+        z-index: 0
     .title
       padding: 0 20px
       width: 100%
@@ -93,15 +132,15 @@ export default {
       font-family: Roboto
       border: none
     .editor
-      margin-top: 20px
+      margin-top: 8px
       .ql-container
         border: none
       .ql-editor
-        padding: 20px
+        padding: 16px 20px 20px 20px
         max-height: 60vh
         min-height: 300px
         letter-spacing: 1px
         background-color: #ffffff
-        font-size: 1.2em
+        font-size: 16px
         line-height: 200%
 </style>

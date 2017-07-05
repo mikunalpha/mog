@@ -20,7 +20,15 @@ const getters = {
 // actions
 const actions = {
   getAuthInfo ({ commit }, {success, error}) {
-    commit(types.RECEIVE_AUTH_INFO, {info: {role: state.roles.Admin}})
+    let info = {
+      id: 'iii',
+      username: 'uuu',
+      role: state.roles.Admin
+    }
+    commit(types.RECEIVE_AUTH_INFO, {info})
+    if (typeof success === 'function') {
+      success(info)
+    }
   }
 
   // login ({ commit }, {credentials, success, error}) {

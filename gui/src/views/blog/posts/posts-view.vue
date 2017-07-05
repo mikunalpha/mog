@@ -71,14 +71,15 @@ export default {
     position: relative
     margin: 0 auto
     margin-bottom: 20px
-    padding: 20px 20px 30px 20px
+    padding: 30px 20px
     max-width: 940px
     background-color: #ffffff
     box-shadow: 0 1px 0 #e0e0e0
     .title
       color: $fontColor
       font-size: 1.6rem
-      cursor: pointer
+      span
+        cursor: pointer
     .created-at
       padding: 10px 0
       font-size: .9rem
