@@ -21,6 +21,7 @@ type Store interface {
 // AccountsStore is a accounts data store interface.
 type AccountsStore interface {
 	Count() (int, error)
+	AdminCount() (int, error)
 	Find(id string) (*Account, error)
 	FindByCredentials(username, password string) (*Account, error)
 	UsernameIsExist(username string) (bool, error)
@@ -32,6 +33,7 @@ type AccountsStore interface {
 // PostsStore is a posts data store interface.
 type PostsStore interface {
 	Count() (int, error)
+	PublishedCount() (int, error)
 	Get(opts *QueryOptions) ([]*Post, error)
 	GetPublished(opts *QueryOptions) ([]*Post, error)
 	Find(id string) (*Post, error)

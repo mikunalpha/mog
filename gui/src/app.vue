@@ -5,8 +5,43 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
-  name: 'app'
+  name: 'app',
+
+  methods: {
+    ...mapActions({
+      getStatus: 'getStatus',
+      getAuthInfo: 'getAuthInfo'
+    })
+  },
+
+  created () {
+    this.getAuthInfo({
+      // success: (info) => {
+      //   console.log(info)
+      //   next()
+      // },
+      // error: (status, e) => {
+      //   console.log(status)
+      //   next()
+      // }
+    })
+
+    this.getStatus({
+      success: (status) => {
+        if (status.administered === false) {
+          this.$router.replace({name: 'Auth.NewAdmin'})
+          return
+        }
+      },
+      error: (status, e) => {
+        console.log(status)
+        this.$router.replace({name: '500'})
+      }
+    })
+  }
 }
 </script>
 

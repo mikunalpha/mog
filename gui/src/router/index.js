@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Store from '@/store'
+// import Store from '@/store'
 
 import NotFoundView from '@/views/not-found-view'
+import ServerErrorView from '@/views/server-error-view'
 
+import AuthView from '@/views/auth/auth-view'
 import AuthLoginView from '@/views/auth/login/login-view'
 import AuthNewAdminView from '@/views/auth/new-admin/new-admin-view'
 
@@ -26,14 +28,26 @@ var router = new Router({
       component: NotFoundView
     },
     {
-      name: 'Auth.Login',
-      path: '/auth/login',
-      component: AuthLoginView
+      name: '500',
+      path: '/500',
+      component: ServerErrorView
     },
     {
-      name: 'Auth.NewAdmin',
-      path: '/auth/new/admin',
-      component: AuthNewAdminView
+      name: 'Auth',
+      path: '/auth',
+      component: AuthView,
+      children: [
+        {
+          name: 'Auth.Login',
+          path: 'login',
+          component: AuthLoginView
+        },
+        {
+          name: 'Auth.NewAdmin',
+          path: 'new/admin',
+          component: AuthNewAdminView
+        }
+      ]
     },
     {
       name: 'Blog',
@@ -81,17 +95,41 @@ var router = new Router({
   ]
 })
 
+// let checkAdministerdRoutePathPrefixes = [
+//   '/auth/'
+// ]
+
 router.beforeEach((to, from, next) => {
-  Store.dispatch('getAuthInfo', {
-    success: (info) => {
-      console.log(info)
-      next()
-    },
-    error: () => {
-      console.log('error')
-      next()
-    }
-  })
+  // Get and check status
+  // if (to.path !== '/auth/new/admin') {
+  //   for (let i in checkAdministerdRoutePathPrefixes) {
+  //     if (to.path.startsWith(checkAdministerdRoutePathPrefixes[i])) {
+  //       Store.dispatch('getStatus', {
+  //         success: (status) => {
+  //           console.log('= =')
+  //           if (status.administered === true) {
+  //             next()
+  //             return
+  //           }
+  //           next('/auth/new/admin')
+  //         }
+  //       })
+  //     }
+  //   }
+  // }
+
+  // Store.dispatch('getAuthInfo', {
+  //   success: (info) => {
+  //     console.log(info)
+  //     next()
+  //   },
+  //   error: (status, e) => {
+  //     console.log(status)
+  //     next()
+  //   }
+  // })
+
+  next()
 })
 
 export default router

@@ -27,10 +27,12 @@ func PostLogin(c *gin.Context) {
 	err = c.BindJSON(&req)
 	if err != nil {
 		handlers.Abort(c, errors.ParseError.SetOriginError(err))
+		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 	if req.Data == nil {
 		handlers.Abort(c, errors.ParamError)
+		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 
@@ -39,6 +41,7 @@ func PostLogin(c *gin.Context) {
 	account, err := accountStore.FindByCredentials(req.Data.Username, req.Data.Password)
 	if err != nil {
 		handlers.Abort(c, errors.NotFoundError.SetOriginError(err).ReplaceMessage("Provided username or password was incorrect."))
+		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 
@@ -50,6 +53,7 @@ func PostLogin(c *gin.Context) {
 	encryptedToken, err := auth.EncryptToken(ai)
 	if err != nil {
 		handlers.Abort(c, errors.ServerError.SetOriginError(err))
+		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 
@@ -69,7 +73,7 @@ func PostLogin(c *gin.Context) {
 
 // GetAuthInfo responses a account data according to token.
 func GetAuthInfo(c *gin.Context) {
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	if authInfo.Role < auth.Anonymous {
 		handlers.Abort(c, errors.AuthenticationError)

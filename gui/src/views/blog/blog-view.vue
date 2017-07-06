@@ -1,5 +1,6 @@
 <template>
   <div id="blog-view">
+    <template v-if="status.gotAt !== null">
     <header>
       <ui-toolbar
         type="colored"
@@ -30,23 +31,22 @@
       name="default"
       @channel="toActions">
     </router-view>
+    </template>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
     ...mapGetters({
+      status: 'status',
       authInfo: 'authInfo'
     })
   },
 
   methods: {
-    ...mapActions({
-      getAuthInfo: 'getAuthInfo'
-    }),
     toDefault (payload) {
       this.$refs.Default.in(payload)
     },
@@ -55,8 +55,8 @@ export default {
     }
   },
 
-  mounted () {
-    this.getAuthInfo({}) // will be deprecated
+  created () {
+    console.log('blog created')
   }
 }
 </script>

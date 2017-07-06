@@ -22,13 +22,13 @@ func Register(rg *gin.RouterGroup) {
 	v1Router.DELETE("/post/:id", Delete)
 }
 
-// Get responses a post data.
+// Get responses posts data.
 func Get(c *gin.Context) {
 	var err error
 	var opts store.QueryOptions
 	var posts []*store.Post
 
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	postsStore := c.MustGet("store").(store.Store).Posts()
 
@@ -61,7 +61,7 @@ func Find(c *gin.Context) {
 	var err error
 	var post *store.Post
 
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	// Check id param from URL path.
 	id := c.Param("id")
@@ -93,7 +93,7 @@ func Post(c *gin.Context) {
 	var err error
 	var req PostData
 
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	if authInfo.Role != auth.Admin {
 		handlers.Abort(c, errors.AuthorizationError.SetOriginError(err))
@@ -140,7 +140,7 @@ func Patch(c *gin.Context) {
 	var err error
 	var req PostData
 
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	if authInfo.Role != auth.Admin {
 		handlers.Abort(c, errors.AuthorizationError.SetOriginError(err))
@@ -192,7 +192,7 @@ func Patch(c *gin.Context) {
 func Delete(c *gin.Context) {
 	var err error
 
-	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	if authInfo.Role != auth.Admin {
 		handlers.Abort(c, errors.AuthorizationError.SetOriginError(err))

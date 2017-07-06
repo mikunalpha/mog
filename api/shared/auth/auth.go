@@ -61,7 +61,7 @@ func DecryptToken(encryptedToken string) (*AuthInfo, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method %v", token.Header["alg"])
 		}
-		return tokenSecretKey, nil
+		return []byte(tokenSecretKey), nil
 	})
 	if err != nil {
 		return nil, err

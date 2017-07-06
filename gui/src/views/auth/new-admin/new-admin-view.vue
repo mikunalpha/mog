@@ -10,7 +10,7 @@
         type="text"
         icon="person"
         placeholder="Username"
-        v-model="username">
+        v-model="account.username">
       </ui-textbox>
 
       <ui-textbox
@@ -18,7 +18,7 @@
         type="password"
         icon="lock"
         placeholder="Password"
-        v-model="password">
+        v-model="account.password">
       </ui-textbox>
 
       <ui-textbox
@@ -38,7 +38,9 @@
         <div class="right">
           <ui-button
             type="primary"
-            color="primary">
+            color="primary"
+            :loading="isSaving"
+            @click="send">
             Send
           </ui-button>
         </div>
@@ -48,12 +50,57 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
+  name: 'new-admin-view',
+
   data () {
     return {
-      username: '',
-      password: '',
-      confirmPassword: ''
+      account: {
+        username: '',
+        password: ''
+      },
+      confirmPassword: '',
+      isSaving: false
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      status: 'status',
+      roles: 'roles'
+    })
+  },
+
+  methods: {
+    ...mapActions({
+      createAdmin: 'createAdmin'
+    }),
+
+    send () {
+      if (this.account.password !== this.confirmPassword) {
+        return
+      }
+
+      this.isSaving = true
+      this.account.role = this.roles.Admin
+
+      this.createAdmin({
+        account: this.account,
+        success: (account) => {
+          this.$router.replace({name: 'Auth.Login'})
+        },
+        error: (status, e) => {
+          this.isSaving = false
+        }
+      })
+    }
+  },
+
+  mounted () {
+    if (this.status.gotAt !== null && this.status.administered) {
+      this.$router.replace({name: 'Blog.Posts'})
     }
   }
 }

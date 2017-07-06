@@ -10,7 +10,7 @@
         type="text"
         icon="person"
         placeholder="Username"
-        v-model="username">
+        v-model="credentials.username">
       </ui-textbox>
 
       <ui-textbox
@@ -18,7 +18,7 @@
         type="password"
         icon="lock"
         placeholder="Password"
-        v-model="password">
+        v-model="credentials.password">
       </ui-textbox>
 
       <br/>
@@ -30,7 +30,9 @@
         <div class="right">
           <ui-button
             type="primary"
-            color="primary">
+            color="primary"
+            :loading="isLogining"
+            @click="login">
             Login
           </ui-button>
         </div>
@@ -40,11 +42,37 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   data () {
     return {
-      username: '',
-      password: ''
+      credentials: {
+        username: '',
+        password: ''
+      },
+      isLogining: false
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      loginAccount: 'loginAccount'
+    }),
+
+    login () {
+      this.isLogining = true
+
+      this.loginAccount({
+        credentials: this.credentials,
+        success: (data) => {
+          this.$router.push({name: 'Blog.Posts'})
+        },
+        error: (status, e) => {
+          this.isLogining = false
+          console.log(status)
+        }
+      })
     }
   }
 }

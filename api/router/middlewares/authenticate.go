@@ -58,7 +58,7 @@ func Authenticate() gin.HandlerFunc {
 			c.Set("authInfo", authInfo)
 		} else {
 			// Set authInfo as anonymous.
-			c.Set("authInfo", auth.AuthInfo{
+			c.Set("authInfo", &auth.AuthInfo{
 				Role: auth.Anonymous,
 			})
 		}
