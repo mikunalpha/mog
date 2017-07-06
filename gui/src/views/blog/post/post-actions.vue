@@ -14,13 +14,26 @@
         icon="edit"
         @click="edit">
       </ui-icon-button>
-      
+
       <ui-icon-button
         type="secondary"
         color="white"
         icon="delete"
-        @click="">
+        @click="deleteConfirm">
       </ui-icon-button>
+
+      <ui-confirm
+        class="deleteConfirm"
+        ref="deleteConfirm"
+        title="Delete Post"
+        type="danger"
+        confirmButtonText="Delete"
+        denyButtonText="Keep"
+        dismissOn="backdrop esc"
+        @confirm=""
+        @deny="">
+        Are you sure you want to delete the post?
+      </ui-confirm>
     </template>
 
     <template v-else-if="mode === 'edit' && authInfo.role === roles.Admin">
@@ -80,6 +93,9 @@ export default {
     },
 
     // Change to edit mode
+    deleteConfirm () {
+      this.$refs.deleteConfirm.open()
+    },
     edit () {
       this.$emit('channel', {cmd: 'changeMode', data: 'edit'})
       this.mode = 'edit'
@@ -111,10 +127,14 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~@/assets/sass/variables.sass'
+
 #post-actions
   padding-right: 16px
   height: 36px
   .ui-icon-button
     width: 36px
     height: 36px
+  .deleteConfirm
+    color: $fontColor
 </style>

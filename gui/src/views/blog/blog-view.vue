@@ -1,35 +1,37 @@
 <template>
   <div id="blog-view">
-    <header>
-      <ui-toolbar
-        type="colored"
-        textColor="white"
-        :raised="false"
-        :removeBrandDivider="false"
-        :removeNavIcon="false">
-        <div slot="icon">
+    <template v-if="status && status.loaded && status.administered">
+      <header>
+        <ui-toolbar
+          type="colored"
+          textColor="white"
+          :raised="false"
+          :removeBrandDivider="false"
+          :removeNavIcon="false">
+          <div slot="icon">
 
-        </div>
+          </div>
 
-        <div slot="brand">
-          <span class="brand">Mog</span>
-        </div>
+          <div slot="brand">
+            <span class="brand">Mog</span>
+          </div>
 
-        <div slot="actions">
-          <router-view
-            ref="Actions"
-            name="actions"
-            @channel="toDefault">
-          </router-view>
-        </div>
-      </ui-toolbar>
-    </header>
+          <div slot="actions">
+            <router-view
+              ref="Actions"
+              name="actions"
+              @channel="toDefault">
+            </router-view>
+          </div>
+        </ui-toolbar>
+      </header>
 
-    <router-view
-      ref="Default"
-      name="default"
-      @channel="toActions">
-    </router-view>
+      <router-view
+        ref="Default"
+        name="default"
+        @channel="toActions">
+      </router-view>
+    </template>
   </div>
 </template>
 
@@ -39,6 +41,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
+      status: 'status',
       authInfo: 'authInfo'
     })
   },
@@ -56,7 +59,7 @@ export default {
   },
 
   mounted () {
-    this.getAuthInfo({}) // will be deprecated
+    // this.getAuthInfo({}) // will be deprecated
   }
 }
 </script>

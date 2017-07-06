@@ -31,6 +31,22 @@ func (s *postsStore) Count() (int, error) {
 	return count, nil
 }
 
+// PublishedCount returns number of published documnets of this collection.
+func (s *postsStore) PublishedCount() (int, error) {
+	if s.store.session == nil {
+		return 0, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+
+	count, err := countRetry(DefaultRetryTimes, s.collection, bson.M{"status": 9999})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // Get returns Posts by given opts.
 func (s *postsStore) Get(opts *store.QueryOptions) ([]*store.Post, error) {
 	if s.store.session == nil {

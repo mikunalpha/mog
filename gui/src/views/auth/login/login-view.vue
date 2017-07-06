@@ -1,5 +1,6 @@
 <template>
   <div id="login-view">
+    <template v-if="status && status.loaded && status.administered">
     <div class="title">
       Mog
     </div>
@@ -10,7 +11,7 @@
         type="text"
         icon="person"
         placeholder="Username"
-        v-model="username">
+        v-model="credentials.username">
       </ui-textbox>
 
       <ui-textbox
@@ -18,7 +19,7 @@
         type="password"
         icon="lock"
         placeholder="Password"
-        v-model="password">
+        v-model="credentials.password">
       </ui-textbox>
 
       <br/>
@@ -36,16 +37,27 @@
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
-      username: '',
-      password: ''
+      credentials: {
+        username: '',
+        password: ''
+      }
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      status: 'status'
+    })
   }
 }
 </script>

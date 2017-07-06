@@ -9,6 +9,7 @@ import (
 	"github.com/mikunalpha/mog/api/handlers/accounts"
 	"github.com/mikunalpha/mog/api/handlers/auth"
 	"github.com/mikunalpha/mog/api/handlers/posts"
+	"github.com/mikunalpha/mog/api/handlers/status"
 	"github.com/mikunalpha/mog/api/router/middlewares"
 	"github.com/mikunalpha/mog/api/shared/utils"
 	"gopkg.in/gin-gonic/gin.v1"
@@ -23,10 +24,10 @@ var _router *gin.Engine
 
 // _registers contains funcs to register subrouters.
 var _registers = []func(*gin.RouterGroup){
+	status.Register,
 	auth.Register,
 	accounts.Register,
 	posts.Register,
-	// test.Register,
 }
 
 // methodOverride is used to override the method before request go into gin

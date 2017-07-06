@@ -22,7 +22,7 @@ func Register(rg *gin.RouterGroup) {
 	v1Router.DELETE("/post/:id", Delete)
 }
 
-// Get responses a post data.
+// Get responses posts data.
 func Get(c *gin.Context) {
 	var err error
 	var opts store.QueryOptions

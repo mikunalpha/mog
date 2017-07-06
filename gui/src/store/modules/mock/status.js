@@ -3,6 +3,12 @@ import * as types from '../../mutations'
 // initial state
 const state = {
   status: {
+    administered: true,
+    blog: {
+      posts: {
+        amount: 0
+      }
+    }
   }
 }
 
@@ -15,6 +21,12 @@ const getters = {
 const actions = {
   getStatus ({ commit }, {success, error}) {
     let status = {
+      administered: true,
+      blog: {
+        posts: {
+          amount: 0
+        }
+      }
     }
     commit(types.RECEIVE_STATUS, {status})
     if (typeof success === 'function') {

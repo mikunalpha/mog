@@ -33,6 +33,22 @@ func (s *accountsStore) Count() (int, error) {
 	return count, nil
 }
 
+// AdminCount returns number of admin documnets of this collection.
+func (s *accountsStore) AdminCount() (int, error) {
+	if s.store.session == nil {
+		return 0, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+
+	count, err := countRetry(DefaultRetryTimes, s.collection, bson.M{"role": 9999})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // Find returns a Account by given id.
 func (s *accountsStore) Find(id string) (*store.Account, error) {
 	if s.store.session == nil {
@@ -113,7 +129,11 @@ func (s *accountsStore) Create(account *store.Account) error {
 	if account.Password == nil {
 		account.Password = new(string)
 	}
-	hashedPassword := string([]byte(*account.Password))
+	h, err := bcrypt.GenerateFromPassword([]byte(*account.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	hashedPassword := string(h)
 
 	account.Password = &hashedPassword
 
