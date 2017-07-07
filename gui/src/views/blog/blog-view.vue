@@ -10,21 +10,21 @@
         :removeNavIcon="false">
         <div slot="icon">
 
-        </div>
+          </div>
 
-        <div slot="brand">
-          <span class="brand">Mog</span>
-        </div>
+          <div slot="brand">
+            <span class="brand">Mog</span>
+          </div>
 
-        <div slot="actions">
-          <router-view
-            ref="Actions"
-            name="actions"
-            @channel="toDefault">
-          </router-view>
-        </div>
-      </ui-toolbar>
-    </header>
+          <div slot="actions">
+            <router-view
+              ref="Actions"
+              name="actions"
+              @channel="toDefault">
+            </router-view>
+          </div>
+        </ui-toolbar>
+      </header>
 
     <router-view
       ref="Default"

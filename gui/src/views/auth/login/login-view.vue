@@ -1,5 +1,6 @@
 <template>
   <div id="login-view">
+    <template v-if="status && status.loaded && status.administered">
     <div class="title">
       Mog
     </div>
@@ -38,6 +39,7 @@
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -74,6 +76,12 @@ export default {
         }
       })
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      status: 'status'
+    })
   }
 }
 </script>

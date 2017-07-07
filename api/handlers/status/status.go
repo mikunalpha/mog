@@ -20,7 +20,11 @@ func Register(rg *gin.RouterGroup) {
 func Get(c *gin.Context) {
 	var err error
 
+<<<<<<< HEAD
 	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
+=======
+	authInfo := c.MustGet("authInfo").(auth.AuthInfo)
+>>>>>>> da1474513963a90bd1176e353ded31eeb3c42dfc
 
 	accountStore := c.MustGet("store").(store.Store).Accounts()
 
