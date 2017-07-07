@@ -28,14 +28,11 @@ var router = new Router({
       component: NotFoundView
     },
     {
-<<<<<<< HEAD
       name: '500',
       path: '/500',
       component: ServerErrorView
     },
     {
-=======
->>>>>>> da1474513963a90bd1176e353ded31eeb3c42dfc
       name: 'Auth',
       path: '/auth',
       component: AuthView,
