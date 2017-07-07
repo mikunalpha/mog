@@ -1,6 +1,6 @@
 <template>
   <div id="login-view">
-    <template v-if="status && status.loaded && status.administered">
+    <template v-if="status && status.administered">
     <div class="title">
       Mog
     </div>
@@ -59,7 +59,8 @@ export default {
 
   methods: {
     ...mapActions({
-      loginAccount: 'loginAccount'
+      loginAccount: 'loginAccount',
+      getAuthInfo: 'getAuthInfo'
     }),
 
     login () {
@@ -68,6 +69,7 @@ export default {
       this.loginAccount({
         credentials: this.credentials,
         success: (data) => {
+          this.getAuthInfo({})
           this.$router.push({name: 'Blog.Posts'})
         },
         error: (status, e) => {

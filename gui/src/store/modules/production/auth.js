@@ -23,10 +23,11 @@ const getters = {
 const actions = {
   createAdmin ({ commit }, {account, success, error}) {
     axios.post('/mogapis/v1/account', {
+      data: account
+    }, {
       headers: {
         'Authorization': 'Bearer ' + cookies.get('at')
-      },
-      data: account
+      }
     }).then(function (response) {
       if (typeof success === 'function') {
         success(response.data.data)
@@ -50,10 +51,11 @@ const actions = {
 
   loginAccount ({ commit }, {credentials, success, error}) {
     axios.post('/mogapis/v1/auth/login', {
+      data: credentials
+    }, {
       headers: {
         'Authorization': 'Bearer ' + cookies.get('at')
-      },
-      data: credentials
+      }
     }).then(function (response) {
       if (typeof success === 'function') {
         success(response.data.data)

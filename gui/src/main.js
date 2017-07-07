@@ -18,7 +18,7 @@ Vue.filter('fromNow', (t) => {
 
 Vue.filter('toDatetime', (t) => {
   let d = new Moment(t * 1000)
-  return d.format('YYYY-MM-DD HH:mm:ss')
+  return d.format('YYYY.MM.DD HH:mm:ss')
 })
 
 /* eslint-disable no-new */

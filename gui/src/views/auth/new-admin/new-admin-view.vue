@@ -75,7 +75,8 @@ export default {
 
   methods: {
     ...mapActions({
-      createAdmin: 'createAdmin'
+      createAdmin: 'createAdmin',
+      getStatus: 'getStatus'
     }),
 
     send () {
@@ -90,6 +91,7 @@ export default {
         account: this.account,
         success: (account) => {
           this.$router.replace({name: 'Auth.Login'})
+          this.getStatus({})
         },
         error: (status, e) => {
           this.isSaving = false

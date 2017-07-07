@@ -3,6 +3,7 @@ package posts
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/mikunalpha/mog/api/handlers"
 	"github.com/mikunalpha/mog/api/router/middlewares"
@@ -51,6 +52,16 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	if c.Query("excerpt") == "1" {
+		for i := range posts {
+			index := strings.Index(*posts[i].Content, "</p>")
+			if index < 0 {
+				continue
+			}
+			*posts[i].Content = (*posts[i].Content)[:index+4]
+		}
+	}
+
 	c.JSON(200, PostsData{
 		Data: posts,
 	})
@@ -96,14 +107,8 @@ func Post(c *gin.Context) {
 	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	if authInfo.Role != auth.Admin {
+		fmt.Println(authInfo.Role)
 		handlers.Abort(c, errors.AuthorizationError.SetOriginError(err))
-		return
-	}
-
-	// Check id param from URL path.
-	id := c.Param("id")
-	if len(id) != 24 {
-		handlers.Abort(c, errors.ParseError.SetOriginError(fmt.Errorf("Format of id is invalid.")))
 		return
 	}
 

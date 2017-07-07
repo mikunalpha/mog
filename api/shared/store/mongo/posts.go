@@ -58,7 +58,7 @@ func (s *postsStore) Get(opts *store.QueryOptions) ([]*store.Post, error) {
 
 	var query *mgo.Query
 
-	query = s.collection.Find(nil)
+	query = s.collection.Find(nil).Sort("-_id")
 	// Find(nil).
 	// Select(bson.M{
 	// 	"content": 0})
@@ -95,7 +95,7 @@ func (s *postsStore) GetPublished(opts *store.QueryOptions) ([]*store.Post, erro
 
 	var query *mgo.Query
 
-	query = s.collection.Find(bson.M{"published": true})
+	query = s.collection.Find(bson.M{"published": true}).Sort("-_id")
 	// Find(bson.M{
 	// 	"published": true}).
 	// Select(bson.M{

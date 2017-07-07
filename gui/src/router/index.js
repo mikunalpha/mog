@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Store from '@/store'
+import Store from '@/store'
 
 import NotFoundView from '@/views/not-found-view'
 import ServerErrorView from '@/views/server-error-view'
@@ -99,7 +99,22 @@ var router = new Router({
 //   '/auth/'
 // ]
 
+let administerOnlyRoutePathPrefixes = [
+  '/blog/new'
+]
+
 router.beforeEach((to, from, next) => {
+  // Avoid non-admin touch some page.
+  for (let i in administerOnlyRoutePathPrefixes) {
+    if (to.path.startsWith(administerOnlyRoutePathPrefixes[i])) {
+      // console.log(Store.getters.authInfo.role)
+      if (Store.getters.authInfo.role !== Store.getters.roles.Admin) {
+        next('/blog/posts')
+        return
+      }
+    }
+  }
+
   // Get and check status
   // if (to.path !== '/auth/new/admin') {
   //   for (let i in checkAdministerdRoutePathPrefixes) {

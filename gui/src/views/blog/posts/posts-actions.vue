@@ -34,7 +34,7 @@ export default {
   },
 
   mounted () {
-    this.getAuthInfo({}) // will be deprecated
+    //
   }
 }
 </script>

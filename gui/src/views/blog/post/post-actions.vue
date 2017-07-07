@@ -5,10 +5,11 @@
         type="secondary"
         color="white"
         icon="arrow_back"
-        @click="$router.push({name: 'Blog.Posts'})">
+        @click="backToPostsView">
       </ui-icon-button>
 
       <ui-icon-button
+        v-if="post.data.id"
         type="secondary"
         color="white"
         icon="edit"
@@ -16,6 +17,7 @@
       </ui-icon-button>
 
       <ui-icon-button
+        v-if="post.data.id"
         type="secondary"
         color="white"
         icon="delete"
@@ -30,7 +32,7 @@
         confirmButtonText="Delete"
         denyButtonText="Keep"
         dismissOn="backdrop esc"
-        @confirm=""
+        @confirm="destroy"
         @deny="">
         Are you sure you want to delete the post?
       </ui-confirm>
@@ -57,7 +59,7 @@
         type="secondary"
         color="white"
         icon="arrow_back"
-        @click="$router.push({name: 'Blog.Posts'})">
+        @click="backToPostsView">
       </ui-icon-button>
     </template>
   </div>
@@ -76,13 +78,15 @@ export default {
   computed: {
     ...mapGetters({
       authInfo: 'authInfo',
-      roles: 'roles'
+      roles: 'roles',
+      post: 'post'
     })
   },
 
   methods: {
     ...mapActions({
-      getAuthInfo: 'getAuthInfo'
+      getAuthInfo: 'getAuthInfo',
+      deletePost: 'deletePost'
     }),
 
     // communicate with content
@@ -104,11 +108,30 @@ export default {
       this.$emit('channel', {cmd: 'changeMode', data: 'view'})
       this.mode = 'view'
     },
+
+    // Save post
     save () {
       this.$emit('channel', {cmd: 'savePost'})
     },
     savePost (data) {
       console.log(data.content)
+    },
+
+    // Delete post
+    destroy () {
+      this.deletePost({
+        id: this.$route.params.id,
+        success: (post) => {
+          console.log(post)
+          this.$router.push({name: 'Blog.Posts'})
+        },
+        error: (status, e) => {
+        }
+      })
+    },
+
+    backToPostsView () {
+      this.$router.push({name: 'Blog.Posts', query: {page: 1}})
     }
   },
 
@@ -120,8 +143,8 @@ export default {
     // next()
   // },
 
-  mounted () {
-    this.getAuthInfo({}) // will be deprecated
+  created () {
+    // this.getAuthInfo({}) // will be deprecated
   }
 }
 </script>

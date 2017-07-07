@@ -18,6 +18,7 @@ export default {
   },
 
   created () {
+    console.log('app created')
     this.getAuthInfo({
       // success: (info) => {
       //   console.log(info)

@@ -1,30 +1,32 @@
 <template>
   <div id="new-post-view">
-    <div class="wrap edit">
-      <div class="published">
-        <ui-switch
-          label="Published"
-          v-model="newPost.published">
-        </ui-switch>
+    <template v-if="authInfo.role === roles.Admin">
+      <div class="wrap edit">
+        <div class="published">
+          <ui-switch
+            label="Published"
+            v-model="newPost.published">
+          </ui-switch>
+        </div>
+
+        <input
+          class="title"
+          type="text"
+          placeholder="Insert title here..."
+          v-model="newPost.title"
+          @keyup=""
+          @cut=""
+          @paste="">
+
+        <quill-editor
+          class="editor"
+          placeholder="Insert content here..."
+          :options="quillEditorOptions"
+          v-model="newPost.content"
+          @change="">
+        </quill-editor>
       </div>
-
-      <input
-        class="title"
-        type="text"
-        placeholder="Insert title here..."
-        v-model="newPost.title"
-        @keyup=""
-        @cut=""
-        @paste="">
-
-      <quill-editor
-        class="editor"
-        placeholder="Insert content here..."
-        :options="quillEditorOptions"
-        v-model="newPost.content"
-        @change="">
-      </quill-editor>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -71,7 +73,6 @@ export default {
 
   methods: {
     ...mapActions({
-      getAuthInfo: 'getAuthInfo'
     }),
 
     // communicate with actions button
@@ -96,7 +97,7 @@ export default {
   },
 
   mounted () {
-    this.getAuthInfo({}) // will be deprecated
+    //
   }
 }
 </script>

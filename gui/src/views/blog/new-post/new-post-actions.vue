@@ -31,7 +31,8 @@ export default {
 
   methods: {
     ...mapActions({
-      getAuthInfo: 'getAuthInfo'
+      createPost: 'createPost',
+      getStatus: 'getStatus'
     }),
 
     // communicate with content
@@ -44,13 +45,25 @@ export default {
     save () {
       this.$emit('channel', {cmd: 'savePost'})
     },
-    savePost (data) {
-      console.log(data.content)
+    savePost (newPost) {
+      console.log(newPost.title)
+      console.log(newPost.content)
+
+      this.createPost({
+        post: newPost,
+        success: (post) => {
+          console.log(post)
+          this.getStatus({})
+          this.$router.push({name: 'Blog.Posts'})
+        },
+        error: (status, e) => {
+        }
+      })
     }
   },
 
   mounted () {
-    this.getAuthInfo({}) // will be deprecated
+    //
   }
 }
 </script>

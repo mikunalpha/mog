@@ -1,6 +1,16 @@
 <template>
   <div id="post-view">
-    <template v-if="mode === 'edit' && authInfo.role === roles.Admin">
+    <template v-if="post.gotAt === null">
+      <div class="loading-post">
+        Loading...
+      </div>
+    </template>
+    <template v-else-if="post.gotAt !== null && !post.data.id">
+      <div class="no-post">
+        Not Found
+      </div>
+    </template>
+    <template v-else-if="mode === 'edit' && authInfo.role === roles.Admin">
       <div class="wrap edit">
         <div class="published">
           <ui-switch
@@ -30,15 +40,15 @@
     <template v-else>
       <div class="wrap view">
         <div class="title">
-          {{ post.title }}
+          {{ post.data.title }}
         </div>
 
         <div class="created-at">
           <ui-icon class="time" icon="date_range"></ui-icon>
-          {{ post.created_at | toDatetime }}
+          {{ post.data.created_at | toDatetime }}
         </div>
 
-        <div class="content" v-html="post.content">
+        <div class="content" v-html="post.data.content">
         </div>
       </div>
     </template>
@@ -91,6 +101,7 @@ export default {
   methods: {
     ...mapActions({
       getPost: 'getPost',
+      updatePost: 'updatePost',
       clearPost: 'clearPost'
     }),
 
@@ -98,7 +109,7 @@ export default {
     in ({cmd, data}) {
       if (cmd === 'changeMode') {
         this.mode = data
-        this.editedPost = Object.assign({}, this.post)
+        this.editedPost = Object.assign({}, this.post.data)
       } else if (cmd === 'savePost') {
         this.editedPostChange()
       }
@@ -118,11 +129,23 @@ export default {
     }
   },
 
-  mounted () {
-    let options = {
-      id: 'abcd'
-    }
-    this.getPost({options})
+  created () {
+    // scroll to top
+    window.scrollTo(0, 0)
+
+    this.getPost({
+      id: this.$route.params.id,
+      success: (post) => {
+        console.log(post.id)
+        // if (!post.id || post.id === '') {
+        //   this.$router.replace({name: '404'})
+        // }
+      }
+    })
+  },
+
+  beforeDestroy () {
+    this.clearPost({})
   }
 }
 </script>
@@ -187,11 +210,20 @@ export default {
       .ql-container
         border: none
       .ql-editor
-        padding: 16px 20px 20px 20px
+        padding: 0 20px 20px 20px
         max-height: 60vh
         min-height: 300px
         letter-spacing: 1px
         background-color: #ffffff
         font-size: 16px
         line-height: 200%
+        p
+          margin-top: 16px
+          margin-bottom: 16px
+
+  .no-post, .loading-post
+    padding: 60px 0 0 0
+    text-align: center
+    font-size: 32px
+    color: lighten($fontColor, 20%)
 </style>
