@@ -187,8 +187,7 @@ func Patch(c *gin.Context) {
 	// Reponse a post with new id.
 	c.JSON(200, PostData{
 		Data: &store.Post{
-			Id:        &id,
-			UpdatedAt: req.Data.UpdatedAt,
+			Id: &id,
 		},
 	})
 }

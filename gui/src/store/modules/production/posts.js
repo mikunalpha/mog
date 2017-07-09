@@ -81,11 +81,6 @@ const actions = {
     })
   },
 
-  clearPost ({ commit }) {
-    console.log('123')
-    commit(types.CLEAR_POST)
-  },
-
   createPost ({ commit }, {post, success, error}) {
     axios.post('/mogapis/v1/post', {
       data: post
@@ -169,6 +164,14 @@ const actions = {
         error(e.response.status, e.response.data.error)
       }
     })
+  },
+
+  refreshPost ({ commit }, {post}) {
+    commit(types.RECEIVE_POST, {post})
+  },
+
+  clearPost ({ commit }) {
+    commit(types.CLEAR_POST)
   }
 }
 

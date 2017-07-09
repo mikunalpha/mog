@@ -164,7 +164,7 @@ func (s *accountsStore) Update(id string, account store.Account) error {
 	account.Role = nil
 	account.CreatedAt = nil
 
-	err = updateRetry(DefaultRetryTimes, s.collection, bson.M{"_id": id}, bson.M{"$set": account})
+	err = updateRetry(DefaultRetryTimes, s.collection, bson.M{"_id": id}, account)
 	if err != nil {
 		return err
 	}

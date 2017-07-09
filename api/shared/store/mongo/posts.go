@@ -68,7 +68,7 @@ func (s *postsStore) Get(opts *store.QueryOptions) ([]*store.Post, error) {
 			query = query.Skip(*opts.Offset)
 		}
 		if opts.Limit != nil {
-			query = query.Skip(*opts.Limit)
+			query = query.Limit(*opts.Limit)
 		}
 	}
 
@@ -106,7 +106,7 @@ func (s *postsStore) GetPublished(opts *store.QueryOptions) ([]*store.Post, erro
 			query = query.Skip(*opts.Offset)
 		}
 		if opts.Limit != nil {
-			query = query.Skip(*opts.Limit)
+			query = query.Limit(*opts.Limit)
 		}
 	}
 
@@ -237,7 +237,9 @@ func (s *postsStore) UpdateByAuthorId(authorId, id string, post store.Post) erro
 	now := time.Now().Unix()
 	post.UpdatedAt = &now
 
-	err = updateRetry(DefaultRetryTimes, s.collection, bson.M{"author_id": authorId, "_id": id}, bson.M{"$set": post})
+	fmt.Println(&post)
+
+	err = updateRetry(DefaultRetryTimes, s.collection, bson.M{"author_id": authorId, "_id": id}, post)
 	if err != nil {
 		return err
 	}

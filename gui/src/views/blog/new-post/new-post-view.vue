@@ -42,11 +42,9 @@ export default {
           // toolbar: '#editor-toolbar'
           toolbar: [
             [{'header': [1, 2, 3, false]}],
-            [{'size': ['small', false, 'large', 'huge']}],
             ['bold', 'italic', 'underline', 'strike'],
             ['link', 'image'],
             ['blockquote', 'code-block'],
-            [{'list': 'ordered'}, {'list': 'bullet'}],
             ['clean']
           ]
         }

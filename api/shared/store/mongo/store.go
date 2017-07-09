@@ -138,11 +138,11 @@ func insertRetry(t uint32, c *mgo.Collection, docs ...interface{}) error {
 }
 
 // updateRetry retries to update or insert t times unit error is not 'EOF' problem.
-func updateRetry(t uint32, c *mgo.Collection, selector, update interface{}) error {
+func updateRetry(t uint32, c *mgo.Collection, selector, changes interface{}) error {
 	var err error
 
 	for {
-		err = c.Update(selector, update)
+		err = c.Update(selector, bson.M{"$set": changes})
 		if err != nil && err.Error() == "EOF" {
 			if t > 0 {
 				c.Database.Session.Refresh()
@@ -158,11 +158,11 @@ func updateRetry(t uint32, c *mgo.Collection, selector, update interface{}) erro
 }
 
 // updateAllRetry retries to update or insert t times unit error is not 'EOF' problem.
-func updateAllRetry(t uint32, c *mgo.Collection, selector, update interface{}) error {
+func updateAllRetry(t uint32, c *mgo.Collection, selector, changes interface{}) error {
 	var err error
 
 	for {
-		_, err = c.UpdateAll(selector, update)
+		_, err = c.UpdateAll(selector, bson.M{"$set": changes})
 		if err != nil && err.Error() == "EOF" {
 			if t > 0 {
 				c.Database.Session.Refresh()

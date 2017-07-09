@@ -15,7 +15,8 @@
         <div class="published">
           <ui-switch
             label="Published"
-            v-model="editedPost.published">
+            v-model="editedPost.published"
+            @change="">
           </ui-switch>
         </div>
 
@@ -24,21 +25,21 @@
           type="text"
           placeholder="Insert title here..."
           v-model="editedPost.title"
-          @keyup="editedPostChange"
-          @cut="editedPostChange"
-          @paste="editedPostChange">
+          @keyup=""
+          @cut=""
+          @paste="">
 
         <quill-editor
           class="editor"
           placeholder="Insert content here..."
           :options="quillEditorOptions"
           v-model="editedPost.content"
-          @change="editedPostChange">
+          @ready="onEditorReady($event)">
         </quill-editor>
       </div>
     </template>
     <template v-else>
-      <div class="wrap view">
+      <div class="wrap view" :class="{unpublished: !post.data.published}">
         <div class="title">
           {{ post.data.title }}
         </div>
@@ -65,16 +66,14 @@ export default {
       mode: 'view',
       quillEditorOptions: {
         modules: {
-          // toolbar: '#editor-toolbar'
           toolbar: [
             [{'header': [1, 2, 3, false]}],
-            [{'size': ['small', false, 'large', 'huge']}],
             ['bold', 'italic', 'underline', 'strike'],
             ['link', 'image'],
             ['blockquote', 'code-block'],
-            [{'list': 'ordered'}, {'list': 'bullet'}],
             ['clean']
-          ]
+          ],
+          syntax: true
         }
       },
       editedPost: {
@@ -101,7 +100,7 @@ export default {
   methods: {
     ...mapActions({
       getPost: 'getPost',
-      updatePost: 'updatePost',
+      refreshPost: 'refreshPost',
       clearPost: 'clearPost'
     }),
 
@@ -110,8 +109,10 @@ export default {
       if (cmd === 'changeMode') {
         this.mode = data
         this.editedPost = Object.assign({}, this.post.data)
-      } else if (cmd === 'savePost') {
+      } else if (cmd === 'updatePost') {
         this.editedPostChange()
+      } else if (cmd === 'refreshPost') {
+        this.refreshPostView()
       }
     },
 
@@ -123,9 +124,39 @@ export default {
       }
 
       t.savePostTimeoutHolder = setTimeout(() => {
-        t.$emit('channel', {cmd: 'savePost', data: t.editedPost})
+        t.$emit('channel', {cmd: 'updatePost', data: t.editedPost})
         t.savePostTimeoutHolder = null
       }, 480)
+    },
+
+    refreshPostView () {
+      this.refreshPost({post: this.editedPost})
+    },
+
+    // workaround to remove extra tag p before code-block
+    onEditorReady (editor) {
+      let qlEditor = null
+      for (let i = 0; i < editor.container.childNodes.length; i++) {
+        if (editor.container.childNodes[i].className === 'ql-editor') {
+          qlEditor = editor.container.childNodes[i]
+          break
+        }
+      }
+      if (qlEditor === null) return
+      // console.log(qlEditor)
+
+      let nodeNames = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE', 'OL', 'UL']
+
+      for (let i = 0; i < qlEditor.childNodes.length; i++) {
+        if (!qlEditor.childNodes[i].nextSibling) {
+          continue
+        }
+        if (qlEditor.childNodes[i].nextSibling.className === 'ql-syntax' && qlEditor.childNodes[i].innerHTML === '<br>') {
+          qlEditor.removeChild(qlEditor.childNodes[i])
+        } else if (nodeNames.indexOf(qlEditor.childNodes[i].nextSibling.nodeName) >= 0 && qlEditor.childNodes[i].innerHTML === '<br>') {
+          qlEditor.removeChild(qlEditor.childNodes[i])
+        }
+      }
     }
   },
 
@@ -136,10 +167,7 @@ export default {
     this.getPost({
       id: this.$route.params.id,
       success: (post) => {
-        console.log(post.id)
-        // if (!post.id || post.id === '') {
-        //   this.$router.replace({name: '404'})
-        // }
+        // console.log(post.id)
       }
     })
   },
@@ -180,12 +208,30 @@ export default {
         font-size: 1rem
     .content
       margin: 0 auto
-      padding: 0 20px 20px 20px
+      padding: 16px 20px 20px 20px
       min-height: 300px
       letter-spacing: 1px
       background-color: #ffffff
       line-height: 200%
       font-size: 16px
+      h1, h2, h3, h4, h5, h6
+        margin: 0
+      p
+        margin: 0
+      blockquote
+        margin: 5px 0
+        padding-left: 16px
+        border-left: 4px solid #ccc
+      .ql-syntax
+        margin: 5px 0
+        padding: 5px 10px
+        background-color: #f0f0f0
+    .view
+      margin-top: 8px
+
+  .wrap.view.unpublished
+    .title
+      color: lighten($fontColor, 40%)
 
   .wrap.edit
     position: relative
@@ -210,7 +256,7 @@ export default {
       .ql-container
         border: none
       .ql-editor
-        padding: 0 20px 20px 20px
+        padding: 16px 20px 20px 20px
         max-height: 60vh
         min-height: 300px
         letter-spacing: 1px
@@ -218,8 +264,10 @@ export default {
         font-size: 16px
         line-height: 200%
         p
-          margin-top: 16px
-          margin-bottom: 16px
+          // margin: 0
+        .ql-syntax
+          background-color: #f0f0f0
+          color: $fontColor
 
   .no-post, .loading-post
     padding: 60px 0 0 0

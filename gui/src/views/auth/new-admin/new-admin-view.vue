@@ -4,6 +4,15 @@
       Create Admin
     </div>
 
+    <template v-if="errorMessage !== ''">
+      <ui-alert
+        class="error-message"
+        type="error"
+        @dismiss="clearErrorMessage">
+        {{ errorMessage }}
+      </ui-alert>
+    </template>
+
     <div class="panel">
       <ui-textbox
         class="username"
@@ -62,7 +71,8 @@ export default {
         password: ''
       },
       confirmPassword: '',
-      isSaving: false
+      isSaving: false,
+      errorMessage: ''
     }
   },
 
@@ -80,6 +90,19 @@ export default {
     }),
 
     send () {
+      if (this.account.username.trim().length === 0) {
+        this.errorMessage = 'Username was required.'
+        return
+      } else {
+        this.account.username = this.account.username.trim()
+      }
+      if (this.account.password.trim().length === 0) {
+        this.errorMessage = 'Password was required.'
+        return
+      } else {
+        this.account.password = this.account.password.trim()
+      }
+
       if (this.account.password !== this.confirmPassword) {
         return
       }
@@ -97,6 +120,10 @@ export default {
           this.isSaving = false
         }
       })
+    },
+
+    clearErrorMessage () {
+      this.errorMessage = ''
     }
   },
 
@@ -109,6 +136,8 @@ export default {
 </script>
 
 <style lang="sass">
+$panelWidth: 360px
+
 #new-admin-view
   padding-top: 100px
   min-height: 100vh
@@ -117,10 +146,13 @@ export default {
     padding-bottom: 20px
     text-align: center
     font-size: 1.6rem
+  .error-message
+    margin: 0 auto
+    width: $panelWidth
   .panel
     margin: 0 auto
     padding: 40px 30px 30px 30px
-    width: 360px
+    width: $panelWidth
     background-color: #ffffff
     box-shadow: 0 1px 0 #e0e0e0
     .username, .password

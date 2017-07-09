@@ -46,9 +46,6 @@ export default {
       this.$emit('channel', {cmd: 'savePost'})
     },
     savePost (newPost) {
-      console.log(newPost.title)
-      console.log(newPost.content)
-
       this.createPost({
         post: newPost,
         success: (post) => {

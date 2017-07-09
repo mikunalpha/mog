@@ -50,7 +50,8 @@
         type="secondary"
         color="white"
         icon="save"
-        @click="save">
+        :loading="updating"
+        @click="update">
       </ui-icon-button>
     </template>
 
@@ -71,7 +72,8 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      mode: 'view'
+      mode: 'view',
+      updating: false
     }
   },
 
@@ -86,13 +88,15 @@ export default {
   methods: {
     ...mapActions({
       getAuthInfo: 'getAuthInfo',
+      getStatus: 'getStatus',
+      updatePost: 'updatePost',
       deletePost: 'deletePost'
     }),
 
     // communicate with content
     in ({cmd, data}) {
-      if (cmd === 'savePost') {
-        this.savePost(data)
+      if (cmd === 'updatePost') {
+        this.updateEditedPost(data)
       }
     },
 
@@ -109,12 +113,25 @@ export default {
       this.mode = 'view'
     },
 
-    // Save post
-    save () {
-      this.$emit('channel', {cmd: 'savePost'})
+    // Update post
+    update () {
+      this.updating = true
+      this.$emit('channel', {cmd: 'updatePost'})
     },
-    savePost (data) {
-      console.log(data.content)
+    updateEditedPost (editedPost) {
+      let t = this
+
+      t.updatePost({
+        id: t.$route.params.id,
+        post: editedPost,
+        success: (post) => {
+          t.$emit('channel', {cmd: 'refreshPost'})
+          this.updating = false
+        },
+        error: (status, e) => {
+          this.updating = false
+        }
+      })
     },
 
     // Delete post
@@ -122,7 +139,7 @@ export default {
       this.deletePost({
         id: this.$route.params.id,
         success: (post) => {
-          console.log(post)
+          this.getStatus({})
           this.$router.push({name: 'Blog.Posts'})
         },
         error: (status, e) => {
