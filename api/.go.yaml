@@ -11,3 +11,13 @@ deps:
     type: git
     reference: master
     path: github.com/dgrijalva/jwt-go
+
+  - loc: https://github.com/jinzhu/gorm
+    type: git
+    reference: master
+    path: github.com/jinzhu/gorm
+  
+  - loc: https://github.com/jinzhu/inflection
+    type: git
+    reference: master
+    path: github.com/jinzhu/inflection
