@@ -37,6 +37,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import hljs from 'highlight.js'
+window.hljs = hljs
+console.log('window.hljs')
 
 export default {
   computed: {

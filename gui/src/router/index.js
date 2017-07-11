@@ -63,6 +63,7 @@ var router = new Router({
           },
           beforeEnter: (to, from, next) => {
             to.meta.title = 'Posts'
+            dispatchEvent(new Event('load'))
             next()
           }
         },

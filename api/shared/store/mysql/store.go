@@ -6,6 +6,35 @@ import (
 	"github.com/mikunalpha/mog/api/shared/store"
 )
 
+// NewStore returns a new store with connection info string.
+func NewStore(cis string) (store.Store, error) {
+	var database *gorm.DB
+	var err error
+
+	database, err = gorm.Open("mysql", cis)
+	if err != nil {
+		return nil, err
+	}
+
+	if !database.HasTable(&store.Account{}) {
+		database.
+			Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_general_ci").
+			CreateTable(&store.Account{})
+	}
+
+	if !database.HasTable(&store.Post{}) {
+		database.
+			Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_general_ci").
+			CreateTable(&store.Post{})
+	}
+
+	s := Store{
+		database: database,
+	}
+
+	return s.Copy(), nil
+}
+
 // Store is a mysql implementation of store.
 type Store struct {
 	database *gorm.DB

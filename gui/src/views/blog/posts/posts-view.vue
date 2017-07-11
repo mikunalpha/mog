@@ -1,7 +1,11 @@
 <template>
   <div id="posts-view">
     <template v-if="posts.gotAt !== null && posts.data.length > 0">
-      <div class="post" :class="{unpublished: !p.published}" v-for="p in posts.data">
+      <div 
+        class="post" 
+        :class="{unpublished: !p.published}" 
+        v-for="(p, i) in posts.data"
+        v-if="i < perPagePostsNumber">
         <div class="title">
           <!-- <span @click="goToViewPost({id: p.id})">{{ p.title }}</span> -->
           <router-link 
@@ -18,6 +22,28 @@
 
         <div class="content" v-html="p.content">
         </div>
+      </div>
+
+      <div class="pagination">
+        <ui-icon-button
+          icon="keyboard_arrow_left"
+          size="large"
+          type="secondary"
+          :disabled="(currentPage == 1) ? true : false"
+          tooltip="Previous Page"
+          @click="$router.push({query: {page: currentPage - 1}})">
+        </ui-icon-button>
+        <span class="current-page">
+          {{ currentPage }}
+        </span>
+        <ui-icon-button
+          icon="keyboard_arrow_right"
+          size="large"
+          type="secondary"
+          :disabled="(posts.data.length <= perPagePostsNumber) ? true : false"
+          tooltip="Next Page"
+          @click="$router.push({query: {page: currentPage + 1}})">
+        </ui-icon-button>
       </div>
     </template>
     <template v-else-if="posts.gotAt !== null && posts.data.length === 0">
@@ -39,6 +65,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      perPagePostsNumber: 5
     }
   },
 
@@ -46,26 +73,49 @@ export default {
     ...mapGetters({
       roles: 'roles',
       posts: 'posts'
-    })
+    }),
+
+    currentPage () {
+      let n = parseInt(this.$route.query.page)
+      if (n === 0 || !n) {
+        n = 1
+      }
+      return n
+    }
   },
 
-  components: {
+  watch: {
+    '$route.query.page': function () {
+      // console.log(this.posts)
+      this.goToPage(this.currentPage)
+    }
   },
 
   methods: {
     ...mapActions({
       getPosts: 'getPosts'
     }),
-    goToViewPost ({id}) {
-      this.$router.push({name: 'Blog.Post', params: {id}})
+
+    goToPage (n) {
+      if (n <= 0) {
+        return
+      }
+
+      this.getPosts({options: {
+        limit: this.perPagePostsNumber + 1,
+        offset: (n - 1) * this.perPagePostsNumber,
+        excerpt: 1
+      }})
     }
   },
 
   mounted () {
-    this.getPosts({options: {
-      limit: 2,
-      excerpt: 1
-    }})
+    // this.getPosts({options: {
+    //   limit: this.perPagePostsNumber,
+    //   excerpt: 1
+    // }})
+    // Go to page
+    this.goToPage(this.currentPage)
   }
 }
 </script>
@@ -110,7 +160,9 @@ export default {
   .post.unpublished
     .title a
       color: lighten($fontColor, 40%)
-
+  .pagination
+    margin-top: 50px
+    text-align: center
   .no-posts, .loading-posts
     padding: 60px 0 0 0
     text-align: center
@@ -119,8 +171,14 @@ export default {
 </style>
 
 <style lang="sass">
+@import '~@/assets/sass/variables.sass'
+
 #posts-view
   .post
     .content p
       margin: 0
+    .ql-syntax
+        padding: 5px 10px
+        background-color: #f0f0f0
+        color: $fontColor
 </style>

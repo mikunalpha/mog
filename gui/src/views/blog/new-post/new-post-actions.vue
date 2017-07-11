@@ -5,7 +5,7 @@
         type="secondary"
         color="white"
         icon="arrow_back"
-        @click="$router.push({name: 'Blog.Posts'})">
+        @click="backToPostsView">
       </ui-icon-button>
 
       <ui-icon-button
@@ -56,6 +56,11 @@ export default {
         error: (status, e) => {
         }
       })
+    },
+
+    backToPostsView () {
+      this.$router.go(-1)
+      // this.$router.push({name: 'Blog.Posts', query: {page: 1}})
     }
   },
 

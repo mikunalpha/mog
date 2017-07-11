@@ -101,6 +101,8 @@ export default {
 </script>
 
 <style lang="sass">
+@import '~@/assets/sass/variables.sass'
+
 #new-post-view
   position: relative
   padding-top: 20px
@@ -118,7 +120,6 @@ export default {
       position: absolute
       top: 10px
       right: 25px
-      // width: 120px
       .ui-switch__thumb
         z-index: 1
       .ui-switch__track
@@ -142,4 +143,7 @@ export default {
         background-color: #ffffff
         font-size: 16px
         line-height: 200%
+        .ql-syntax
+          background-color: #f0f0f0
+          color: $fontColor
 </style>

@@ -41,5 +41,6 @@ type PostsStore interface {
 	FindByAuthorId(authorId, id string) (*Post, error)
 	CreateByAuthorId(authorId string, account *Post) error
 	UpdateByAuthorId(authorId, id string, updates Post) error
+	Delete(id string) error
 	DeleteByAuthorId(authorId, id string) error
 }

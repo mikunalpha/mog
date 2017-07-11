@@ -148,17 +148,10 @@ export default {
     },
 
     backToPostsView () {
-      this.$router.push({name: 'Blog.Posts', query: {page: 1}})
+      this.$router.go(-1)
+      // this.$router.push({name: 'Blog.Posts', query: {page: 1}})
     }
   },
-
-  // beforeRouteEnter (to, from, next) {
-    // if (from.name === 'Blog.Posts') {
-    //   console.log(from)
-    //   to.meta.backToRoute = {name: 'Blog.Posts'}
-    // }
-    // next()
-  // },
 
   created () {
     // this.getAuthInfo({}) // will be deprecated

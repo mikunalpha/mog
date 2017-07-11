@@ -30,6 +30,7 @@
           @paste="">
 
         <quill-editor
+          ref="quillEditor"
           class="editor"
           placeholder="Insert content here..."
           :options="quillEditorOptions"
@@ -108,7 +109,9 @@ export default {
     in ({cmd, data}) {
       if (cmd === 'changeMode') {
         this.mode = data
-        this.editedPost = Object.assign({}, this.post.data)
+        if (this.mode === 'edit') {
+          this.editedPost = Object.assign({}, this.post.data)
+        }
       } else if (cmd === 'updatePost') {
         this.editedPostChange()
       } else if (cmd === 'refreshPost') {
@@ -123,6 +126,8 @@ export default {
         clearTimeout(t.savePostTimeoutHolder)
       }
 
+      t.$refs.quillEditor.quill.emitter.emit('text-change')
+      // console.log(t.editedPost.content)
       t.savePostTimeoutHolder = setTimeout(() => {
         t.$emit('channel', {cmd: 'updatePost', data: t.editedPost})
         t.savePostTimeoutHolder = null
@@ -167,7 +172,7 @@ export default {
     this.getPost({
       id: this.$route.params.id,
       success: (post) => {
-        // console.log(post.id)
+        // console.log(post.content)
       }
     })
   },
@@ -226,6 +231,7 @@ export default {
         margin: 5px 0
         padding: 5px 10px
         background-color: #f0f0f0
+        color: $fontColor
     .view
       margin-top: 8px
 
@@ -239,7 +245,6 @@ export default {
       position: absolute
       top: 10px
       right: 25px
-      // width: 120px
       .ui-switch__thumb
         z-index: 1
       .ui-switch__track
@@ -263,8 +268,6 @@ export default {
         background-color: #ffffff
         font-size: 16px
         line-height: 200%
-        p
-          // margin: 0
         .ql-syntax
           background-color: #f0f0f0
           color: $fontColor

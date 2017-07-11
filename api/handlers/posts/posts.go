@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/mikunalpha/mog/api/handlers"
 	"github.com/mikunalpha/mog/api/router/middlewares"
 	"github.com/mikunalpha/mog/api/shared/auth"
@@ -52,13 +53,27 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	maxExcerptContentTextLength := 100
 	if c.Query("excerpt") == "1" {
 		for i := range posts {
-			index := strings.Index(*posts[i].Content, "</p>")
-			if index < 0 {
-				continue
+			paragraphs := strings.Split(*posts[i].Content, "</p>")
+			for i := range paragraphs {
+				paragraphs[i] += "</p>"
 			}
-			*posts[i].Content = (*posts[i].Content)[:index+4]
+			excerptContent := ""
+			excerptContentTextLength := 0
+			for i := range paragraphs {
+				excerptContent += paragraphs[i]
+				document, err := goquery.NewDocumentFromReader(strings.NewReader(paragraphs[i]))
+				if err != nil {
+					continue
+				}
+				excerptContentTextLength += len(document.Find("p").First().Text())
+				if excerptContentTextLength >= maxExcerptContentTextLength {
+					break
+				}
+			}
+			*posts[i].Content = excerptContent
 		}
 	}
 
@@ -218,7 +233,11 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	err = postsStore.DeleteByAuthorId(authInfo.Id, id)
+	if authInfo.Role == auth.Admin {
+		err = postsStore.Delete(id)
+	} else {
+		err = postsStore.DeleteByAuthorId(authInfo.Id, id)
+	}
 	if err != nil {
 		handlers.Abort(c, errors.DatabaseError.SetOriginError(err))
 		return

@@ -237,8 +237,6 @@ func (s *postsStore) UpdateByAuthorId(authorId, id string, post store.Post) erro
 	now := time.Now().Unix()
 	post.UpdatedAt = &now
 
-	fmt.Println(&post)
-
 	err = updateRetry(DefaultRetryTimes, s.collection, bson.M{"author_id": authorId, "_id": id}, post)
 	if err != nil {
 		return err
@@ -247,7 +245,23 @@ func (s *postsStore) UpdateByAuthorId(authorId, id string, post store.Post) erro
 	return nil
 }
 
-// DeleteByAuthorId removes a post by its id.
+// Delete removes a post by its id.
+func (s *postsStore) Delete(id string) error {
+	if s.store.session == nil {
+		return fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+
+	err = removeRetry(DefaultRetryTimes, s.collection, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteByAuthorId removes a post by given authorId and its id.
 func (s *postsStore) DeleteByAuthorId(authorId, id string) error {
 	if s.store.session == nil {
 		return fmt.Errorf("Not work until database is setup.")

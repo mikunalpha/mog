@@ -1,10 +1,10 @@
 <template>
   <div id="posts-actions">
-    <ui-icon-button
+    <!-- <ui-icon-button
       type="secondary"
       color="white"
       icon="search">
-    </ui-icon-button>
+    </ui-icon-button> -->
     <template v-if="authInfo.role === roles.Admin">
       <ui-icon-button
         type="secondary"

@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/mikunalpha/mog/api/services/store"
+	"github.com/mikunalpha/mog/api/shared/utils"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -15,6 +16,8 @@ func Services() gin.HandlerFunc {
 
 		c.Next()
 
-		s.Close()
+		if utils.EnvString("STORE_DRIVER", "mongo") == "mongo" {
+			s.Close()
+		}
 	}
 }

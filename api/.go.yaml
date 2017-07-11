@@ -12,12 +12,17 @@ deps:
     reference: master
     path: github.com/dgrijalva/jwt-go
 
-  - loc: https://github.com/jinzhu/gorm
+  - loc: https://github.com/jinzhu/gorm.git
     type: git
     reference: master
     path: github.com/jinzhu/gorm
   
-  - loc: https://github.com/jinzhu/inflection
+  - loc: https://github.com/jinzhu/inflection.git
     type: git
     reference: master
     path: github.com/jinzhu/inflection
+  
+  - loc: https://github.com/PuerkitoBio/goquery.git
+    type: git
+    reference: master
+    path: github.com/PuerkitoBio/goquery
