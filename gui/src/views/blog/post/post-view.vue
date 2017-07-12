@@ -127,7 +127,7 @@ export default {
       }
 
       t.$refs.quillEditor.quill.emitter.emit('text-change')
-      // console.log(t.editedPost.content)
+
       t.savePostTimeoutHolder = setTimeout(() => {
         t.$emit('channel', {cmd: 'updatePost', data: t.editedPost})
         t.savePostTimeoutHolder = null

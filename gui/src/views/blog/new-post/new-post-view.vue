@@ -19,6 +19,7 @@
           @paste="">
 
         <quill-editor
+          ref="quillEditor"
           class="editor"
           placeholder="Insert content here..."
           :options="quillEditorOptions"
@@ -83,9 +84,18 @@ export default {
     newPostChange () {
       let t = this
 
+      if (this.newPost.title.trim().length === 0) {
+        // this.errorMessage = 'Username was required.'
+        return
+      } else {
+        this.newPost.title = this.newPost.title.trim()
+      }
+
       if (t.savePostTimeoutHolder !== null) {
         clearTimeout(t.savePostTimeoutHolder)
       }
+
+      t.$refs.quillEditor.quill.emitter.emit('text-change')
 
       t.savePostTimeoutHolder = setTimeout(() => {
         t.$emit('channel', {cmd: 'savePost', data: t.newPost})

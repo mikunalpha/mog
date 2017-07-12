@@ -56,23 +56,34 @@ func Get(c *gin.Context) {
 	maxExcerptContentTextLength := 100
 	if c.Query("excerpt") == "1" {
 		for i := range posts {
-			paragraphs := strings.Split(*posts[i].Content, "</p>")
-			for i := range paragraphs {
-				paragraphs[i] += "</p>"
+			document, err := goquery.NewDocumentFromReader(strings.NewReader("<div>" + *posts[i].Content + "</div>"))
+			if err != nil {
+				continue
 			}
 			excerptContent := ""
 			excerptContentTextLength := 0
-			for i := range paragraphs {
-				excerptContent += paragraphs[i]
-				document, err := goquery.NewDocumentFromReader(strings.NewReader(paragraphs[i]))
-				if err != nil {
-					continue
+			ignore := false
+			document.Find("div").First().Children().Each(func(n int, s *goquery.Selection) {
+				if ignore {
+					return
 				}
-				excerptContentTextLength += len(document.Find("p").First().Text())
 				if excerptContentTextLength >= maxExcerptContentTextLength {
-					break
+					excerptContent += "<p>...</p>"
+					ignore = true
+					return
 				}
-			}
+
+				outerHtml, err := goquery.OuterHtml(s)
+				if err == nil {
+					excerptContent += outerHtml
+				} else {
+					html, err := s.Html()
+					if err == nil {
+						excerptContent += html
+					}
+				}
+				excerptContentTextLength += len(s.Text())
+			})
 			*posts[i].Content = excerptContent
 		}
 	}
