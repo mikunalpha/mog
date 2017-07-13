@@ -37,7 +37,8 @@
           type="secondary"
           :disabled="(currentPage == 1) ? true : false"
           tooltip="Previous Page"
-          @click="$router.push({query: {page: currentPage - 1, keyword: $route.query.keyword}})">
+          @oclick="$router.push({query: {page: currentPage - 1, keyword: $route.query.keyword}})"
+          @click="changeToPage(currentPage - 1)">
         </ui-icon-button>
         <span class="current-page">
           {{ currentPage }}
@@ -48,7 +49,8 @@
           type="secondary"
           :disabled="(posts.data.length <= perPagePostsNumber) ? true : false"
           tooltip="Next Page"
-          @click="$router.push({query: {page: currentPage + 1, keyword: $route.query.keyword}})">
+          @oclick="$router.push({query: {page: currentPage + 1, keyword: $route.query.keyword}})"
+          @click="changeToPage(currentPage + 1)">
         </ui-icon-button>
       </div>
     </template>
@@ -78,7 +80,8 @@ export default {
   computed: {
     ...mapGetters({
       roles: 'roles',
-      posts: 'posts'
+      posts: 'posts',
+      scroll: 'scroll'
     }),
 
     currentPage () {
@@ -101,7 +104,8 @@ export default {
 
   methods: {
     ...mapActions({
-      getPosts: 'getPosts'
+      getPosts: 'getPosts',
+      saveScroll: 'saveScroll'
     }),
 
     // communicate with actions button
@@ -120,21 +124,42 @@ export default {
       if (n <= 0) {
         return
       }
+      let t = this
       let options = {
-        limit: this.perPagePostsNumber + 1,
-        offset: (n - 1) * this.perPagePostsNumber,
+        limit: t.perPagePostsNumber + 1,
+        offset: (n - 1) * t.perPagePostsNumber,
         excerpt: 1
       }
-      if (this.$route.query.keyword && this.$route.query.keyword !== '') {
-        options.keyword = this.$route.query.keyword
+      if (t.$route.query.keyword && t.$route.query.keyword !== '') {
+        options.keyword = t.$route.query.keyword
       }
-      this.getPosts({options})
+
+      t.getPosts({
+        options: options,
+        success: () => {
+          // console.log('scrollTo', this.scroll.x, this.scroll.y)
+          window.scrollTo(this.scroll.x, this.scroll.y)
+        }
+      })
+    },
+
+    changeToPage (n) {
+      this.$router.push({query: {page: n, keyword: this.$route.query.keyword}})
+      this.saveScroll({x: 0, y: 0})
     }
   },
 
   mounted () {
     // Go to page
     this.goToPage(this.currentPage)
+  },
+
+  beforeRouteLeave (to, from, next) {
+    let x = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft
+    let y = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop
+    console.log('saveScroll', x, y)
+    this.saveScroll({x, y})
+    next()
   }
 }
 </script>

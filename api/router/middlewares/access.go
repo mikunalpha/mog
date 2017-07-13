@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 type accessLog struct {

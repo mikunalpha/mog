@@ -170,6 +170,10 @@ const actions = {
     commit(types.RECEIVE_POST, {post})
   },
 
+  clearPosts ({ commit }) {
+    commit(types.CLEAR_POSTS)
+  },
+
   clearPost ({ commit }) {
     commit(types.CLEAR_POST)
   }
@@ -187,9 +191,12 @@ const mutations = {
     state.post.gotAt = Date.now()
   },
 
+  [types.CLEAR_POSTS] (state) {
+    state.posts.data = []
+  },
+
   [types.CLEAR_POST] (state) {
     state.post.data = {}
-    state.post.gotAt = null
   }
 }
 

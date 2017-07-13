@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/mikunalpha/mog/api/services/store"
 	"github.com/mikunalpha/mog/api/shared/utils"
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 // Services assigns instances of services for handlers.

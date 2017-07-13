@@ -1,13 +1,13 @@
 package status
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/mikunalpha/mog/api/handlers"
 	"github.com/mikunalpha/mog/api/router/middlewares"
 	"github.com/mikunalpha/mog/api/shared/auth"
 	"github.com/mikunalpha/mog/api/shared/errors"
 	"github.com/mikunalpha/mog/api/shared/store"
 	"github.com/mikunalpha/mog/api/shared/utils"
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 // Register binds handlers to routing rules.

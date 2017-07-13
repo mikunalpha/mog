@@ -4,8 +4,8 @@ import (
 	"log"
 	"runtime"
 
+	"github.com/gin-gonic/gin"
 	"github.com/mikunalpha/mog/api/shared/errors"
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 // Recovery deals with painc.

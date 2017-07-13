@@ -12,12 +12,17 @@ const state = {
         amount: 0
       }
     }
+  },
+  scroll: {
+    x: 0,
+    y: 0
   }
 }
 
 // getters
 const getters = {
-  status: state => state.status
+  status: state => state.status,
+  scroll: state => state.scroll
 }
 
 // actions
@@ -49,6 +54,10 @@ const actions = {
         error(e.response.status, e.response.data.error)
       }
     })
+  },
+
+  saveScroll ({ commit }, {x, y}) {
+    commit(types.RECEIVE_SCROLL, {x, y})
   }
 }
 
@@ -57,6 +66,11 @@ const mutations = {
   [types.RECEIVE_STATUS] (state, { status }) {
     state.status = status
     state.status.gotAt = Date.now()
+  },
+
+  [types.RECEIVE_SCROLL] (state, { x, y }) {
+    state.scroll.x = x
+    state.scroll.y = y
   }
 }
 

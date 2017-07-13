@@ -1,15 +1,17 @@
 ﻿---
 path: github.com/mikunalpha/mog/api
 deps:
-  - loc: gopkg.in/gin-gonic/gin.v1
-    type: goget
+  - loc: https://github.com/gin-gonic/gin.git
+    type: git
+    reference: v1.2
+    path: github.com/gin-gonic/gin
 
   - loc: gopkg.in/mgo.v2
     type: goget
   
   - loc: https://github.com/dgrijalva/jwt-go.git
     type: git
-    reference: master
+    reference: v3.0.0
     path: github.com/dgrijalva/jwt-go
 
   - loc: https://github.com/jinzhu/gorm.git

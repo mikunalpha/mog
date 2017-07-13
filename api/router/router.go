@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/mikunalpha/mog/api/handlers/accounts"
 	"github.com/mikunalpha/mog/api/handlers/auth"
 	"github.com/mikunalpha/mog/api/handlers/posts"
 	"github.com/mikunalpha/mog/api/handlers/status"
 	"github.com/mikunalpha/mog/api/router/middlewares"
 	"github.com/mikunalpha/mog/api/shared/utils"
-	"gopkg.in/gin-gonic/gin.v1"
 )
 
 func init() {

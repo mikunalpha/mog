@@ -3,7 +3,7 @@ package middlewares
 import (
 	"net/http"
 
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 // Cors implements the Cross-origin resource sharing which
