@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/mikunalpha/mog/api/shared/store"
@@ -100,6 +101,97 @@ func (s *postsStore) GetPublished(opts *store.QueryOptions) ([]*store.Post, erro
 	// 	"published": true}).
 	// Select(bson.M{
 	// 	"content": 0})
+
+	if opts != nil {
+		if opts.Offset != nil {
+			query = query.Skip(*opts.Offset)
+		}
+		if opts.Limit != nil {
+			query = query.Limit(*opts.Limit)
+		}
+	}
+
+	err = getRetry(DefaultRetryTimes, s.collection, query, &posts)
+	if err != nil {
+		return nil, err
+	}
+
+	if posts == nil {
+		posts = []*store.Post{}
+	}
+
+	return posts, nil
+}
+
+// GetByFuzzyTitleOrFuzzyContent returns Posts by given keyword and opts.
+func (s *postsStore) GetByFuzzyTitleOrFuzzyContent(keyword string, opts *store.QueryOptions) ([]*store.Post, error) {
+	if s.store.session == nil {
+		return nil, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+	var posts []*store.Post
+
+	keyword = regexp.QuoteMeta(keyword)
+
+	var query *mgo.Query
+
+	query = s.collection.Find(bson.M{
+		"$or": []bson.M{
+			{
+				"title": bson.RegEx{Pattern: keyword, Options: "i"},
+			},
+			{
+				"content": bson.RegEx{Pattern: keyword, Options: "i"},
+			},
+		}}).
+		Sort("-_id")
+
+	if opts != nil {
+		if opts.Offset != nil {
+			query = query.Skip(*opts.Offset)
+		}
+		if opts.Limit != nil {
+			query = query.Limit(*opts.Limit)
+		}
+	}
+
+	err = getRetry(DefaultRetryTimes, s.collection, query, &posts)
+	if err != nil {
+		return nil, err
+	}
+
+	if posts == nil {
+		posts = []*store.Post{}
+	}
+
+	return posts, nil
+}
+
+// GetPublishedByFuzzyTitleOrFuzzyContent returns Posts by given keyowrd and opts.
+func (s *postsStore) GetPublishedByFuzzyTitleOrFuzzyContent(keyword string, opts *store.QueryOptions) ([]*store.Post, error) {
+	if s.store.session == nil {
+		return nil, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+	var posts []*store.Post
+
+	keyword = regexp.QuoteMeta(keyword)
+
+	var query *mgo.Query
+
+	query = s.collection.Find(bson.M{
+		"published": true,
+		"$or": []bson.M{
+			{
+				"title": bson.RegEx{Pattern: keyword, Options: "i"},
+			},
+			{
+				"content": bson.RegEx{Pattern: keyword, Options: "i"},
+			},
+		}}).
+		Sort("-_id")
 
 	if opts != nil {
 		if opts.Offset != nil {

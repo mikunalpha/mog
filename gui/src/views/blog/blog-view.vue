@@ -9,22 +9,25 @@
         :removeBrandDivider="false"
         :removeNavIcon="false">
         <div slot="icon">
+        </div>
 
-          </div>
+        <div slot="brand">
+          <span
+            class="brand"
+            @click="$router.push({name: 'Blog.Posts', query: {page: 1}})">
+            Mog
+          </span>
+        </div>
 
-          <div slot="brand">
-            <span class="brand">Mog</span>
-          </div>
-
-          <div slot="actions">
-            <router-view
-              ref="Actions"
-              name="actions"
-              @channel="toDefault">
-            </router-view>
-          </div>
-        </ui-toolbar>
-      </header>
+        <div slot="actions">
+          <router-view
+            ref="Actions"
+            name="actions"
+            @channel="toDefault">
+          </router-view>
+        </div>
+      </ui-toolbar>
+    </header>
 
     <router-view
       ref="Default"
@@ -78,7 +81,7 @@ export default {
       height: 60px
       .brand
         padding: 0 10px
-        cursor: default
+        cursor: pointer
         user-select: none
         font-size: 110%
 </style>

@@ -36,6 +36,8 @@ type PostsStore interface {
 	PublishedCount() (int, error)
 	Get(opts *QueryOptions) ([]*Post, error)
 	GetPublished(opts *QueryOptions) ([]*Post, error)
+	GetByFuzzyTitleOrFuzzyContent(keyword string, opts *QueryOptions) ([]*Post, error)
+	GetPublishedByFuzzyTitleOrFuzzyContent(keyword string, opts *QueryOptions) ([]*Post, error)
 	Find(id string) (*Post, error)
 	FindPublished(id string) (*Post, error)
 	FindByAuthorId(authorId, id string) (*Post, error)

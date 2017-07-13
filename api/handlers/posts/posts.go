@@ -44,9 +44,17 @@ func Get(c *gin.Context) {
 	}
 
 	if authInfo.Role == auth.Admin {
-		posts, err = postsStore.Get(&opts)
+		if c.Query("keyword") != "" {
+			posts, err = postsStore.GetByFuzzyTitleOrFuzzyContent(c.Query("keyword"), &opts)
+		} else {
+			posts, err = postsStore.Get(&opts)
+		}
 	} else {
-		posts, err = postsStore.GetPublished(&opts)
+		if c.Query("keyword") != "" {
+			posts, err = postsStore.GetPublishedByFuzzyTitleOrFuzzyContent(c.Query("keyword"), &opts)
+		} else {
+			posts, err = postsStore.GetPublished(&opts)
+		}
 	}
 	if err != nil {
 		handlers.Abort(c, errors.DatabaseError.SetOriginError(err))

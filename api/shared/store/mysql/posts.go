@@ -116,6 +116,77 @@ func (s *postsStore) GetPublished(opts *store.QueryOptions) ([]*store.Post, erro
 	return posts, nil
 }
 
+// GetByFuzzyTitleOrFuzzyContent returns Posts by given keyword and opts.
+func (s *postsStore) GetByFuzzyTitleOrFuzzyContent(keyword string, opts *store.QueryOptions) ([]*store.Post, error) {
+	if s.store.database == nil {
+		return nil, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+	var posts []*store.Post
+
+	query := s.table.New().
+		Where("`title` LIKE '%?%' OR `content` LIKE '%?%'", keyword, keyword).
+		Order("`id` desc")
+
+	if opts != nil {
+		if opts.Limit != nil {
+			query = query.Limit(*opts.Limit)
+
+			if opts.Offset != nil {
+				query = query.Offset(*opts.Offset - 1)
+			}
+		}
+	}
+
+	err = query.Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if posts == nil {
+		posts = []*store.Post{}
+	}
+
+	return posts, nil
+}
+
+// GetPublishedByFuzzyTitleOrFuzzyContent returns Posts by given keyowrd and opts.
+func (s *postsStore) GetPublishedByFuzzyTitleOrFuzzyContent(keyword string, opts *store.QueryOptions) ([]*store.Post, error) {
+	if s.store.database == nil {
+		return nil, fmt.Errorf("Not work until database is setup.")
+	}
+
+	var err error
+	var posts []*store.Post
+
+	query := s.table.New().
+		Where("`published` = ?", true).
+		Where("`title` LIKE '%?%' OR `content` LIKE '%?%'", keyword, keyword).
+		Order("`id` desc")
+
+	if opts != nil {
+		if opts.Limit != nil {
+			query = query.Limit(*opts.Limit)
+
+			if opts.Offset != nil {
+				query = query.Offset(*opts.Offset - 1)
+			}
+		}
+	}
+
+	err = query.Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if posts == nil {
+		posts = []*store.Post{}
+	}
+
+	return posts, nil
+}
+
 // Find returns a Post by given id.
 func (s *postsStore) Find(id string) (*store.Post, error) {
 	if s.store.database == nil {

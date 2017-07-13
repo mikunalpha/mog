@@ -1,10 +1,15 @@
 <template>
   <div id="posts-actions">
-    <!-- <ui-icon-button
+    <ui-textbox
+      placeholder="Search ..."
+      v-model="keyword">
+    </ui-textbox>
+    <ui-icon-button
       type="secondary"
       color="white"
-      icon="search">
-    </ui-icon-button> -->
+      icon="search"
+      @click="search">
+    </ui-icon-button>
     <template v-if="authInfo.role === roles.Admin">
       <ui-icon-button
         type="secondary"
@@ -20,6 +25,12 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  data () {
+    return {
+      keyword: ''
+    }
+  },
+
   computed: {
     ...mapGetters({
       authInfo: 'authInfo',
@@ -30,7 +41,11 @@ export default {
   methods: {
     ...mapActions({
       getAuthInfo: 'getAuthInfo'
-    })
+    }),
+
+    search () {
+      this.$emit('channel', {cmd: 'searchPosts', data: this.keyword.trim()})
+    }
   },
 
   mounted () {
@@ -43,7 +58,19 @@ export default {
 #posts-actions
   padding-right: 16px
   height: 36px
+  .ui-textbox
+    display: inline-block
   .ui-icon-button
     width: 36px
     height: 36px
+</style>
+
+<style lang="sass">
+#posts-actions
+  .ui-textbox
+    input
+      padding: 0 5px
+      letter-spacing: 1px
+      color: #ffffff
+      border-bottom-color: rgba(255,255,255,.5)
 </style>

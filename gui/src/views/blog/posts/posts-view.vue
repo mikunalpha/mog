@@ -1,6 +1,12 @@
 <template>
   <div id="posts-view">
     <template v-if="posts.gotAt !== null && posts.data.length > 0">
+      <div
+        class="keyword"
+        v-if="$route.query && $route.query.keyword && $route.query.keyword.trim() !== ''">
+        Result of "<b>{{ $route.query.keyword.trim() }}</b>"
+      </div>
+
       <div 
         class="post" 
         :class="{unpublished: !p.published}" 
@@ -31,7 +37,7 @@
           type="secondary"
           :disabled="(currentPage == 1) ? true : false"
           tooltip="Previous Page"
-          @click="$router.push({query: {page: currentPage - 1}})">
+          @click="$router.push({query: {page: currentPage - 1, keyword: $route.query.keyword}})">
         </ui-icon-button>
         <span class="current-page">
           {{ currentPage }}
@@ -42,7 +48,7 @@
           type="secondary"
           :disabled="(posts.data.length <= perPagePostsNumber) ? true : false"
           tooltip="Next Page"
-          @click="$router.push({query: {page: currentPage + 1}})">
+          @click="$router.push({query: {page: currentPage + 1, keyword: $route.query.keyword}})">
         </ui-icon-button>
       </div>
     </template>
@@ -86,7 +92,9 @@ export default {
 
   watch: {
     '$route.query.page': function () {
-      // console.log(this.posts)
+      this.goToPage(this.currentPage)
+    },
+    '$route.query.keyword': function () {
       this.goToPage(this.currentPage)
     }
   },
@@ -96,24 +104,35 @@ export default {
       getPosts: 'getPosts'
     }),
 
+    // communicate with actions button
+    in ({cmd, data}) {
+      if (cmd === 'searchPosts') {
+        this.$router.push({
+          query: {
+            page: this.currentPage,
+            keyword: data
+          }
+        })
+      }
+    },
+
     goToPage (n) {
       if (n <= 0) {
         return
       }
-
-      this.getPosts({options: {
+      let options = {
         limit: this.perPagePostsNumber + 1,
         offset: (n - 1) * this.perPagePostsNumber,
         excerpt: 1
-      }})
+      }
+      if (this.$route.query.keyword && this.$route.query.keyword !== '') {
+        options.keyword = this.$route.query.keyword
+      }
+      this.getPosts({options})
     }
   },
 
   mounted () {
-    // this.getPosts({options: {
-    //   limit: this.perPagePostsNumber,
-    //   excerpt: 1
-    // }})
     // Go to page
     this.goToPage(this.currentPage)
   }
@@ -129,6 +148,10 @@ export default {
   padding-bottom: 120px
   min-height: 100vh
   background-color: #f0f0f0
+  .keyword
+    margin: 0 auto
+    padding: 0 10px 20px 10px
+    max-width: 940px
   .post
     position: relative
     margin: 0 auto
@@ -178,6 +201,7 @@ export default {
     .content p
       margin: 0
     .ql-syntax
+        margin: 5px 0
         padding: 5px 10px
         background-color: #f0f0f0
         color: $fontColor
