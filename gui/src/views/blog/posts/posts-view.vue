@@ -111,6 +111,7 @@ export default {
     // communicate with actions button
     in ({cmd, data}) {
       if (cmd === 'searchPosts') {
+        this.saveScroll({x: 0, y: 0})
         this.$router.push({
           query: {
             page: this.currentPage,
@@ -144,8 +145,8 @@ export default {
     },
 
     changeToPage (n) {
-      this.$router.push({query: {page: n, keyword: this.$route.query.keyword}})
       this.saveScroll({x: 0, y: 0})
+      this.$router.push({query: {page: n, keyword: this.$route.query.keyword}})
     }
   },
 
