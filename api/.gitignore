@@ -2,3 +2,5 @@ api
 APIs.md
 vendor/
 .vscode/
+.gopath
+glide.lock

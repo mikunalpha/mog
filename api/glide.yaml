@@ -1,0 +1,39 @@
+package: .
+import:
+- package: github.com/PuerkitoBio/goquery
+- package: github.com/dgrijalva/jwt-go
+- package: github.com/gin-gonic/gin
+- package: github.com/jinzhu/gorm
+  subpackages:
+  - dialects/mysql
+- package: github.com/mikunalpha/mog
+  subpackages:
+  - api/handlers
+  - api/handlers/accounts
+  - api/handlers/auth
+  - api/handlers/posts
+  - api/handlers/status
+  - api/router
+  - api/router/middlewares
+  - api/services/store
+  - api/shared/auth
+  - api/shared/errors
+  - api/shared/store
+  - api/shared/store/mongo
+  - api/shared/store/mysql
+  - api/shared/utils
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert
+ignore:
+- github.com/mikunalpha/mog/api
+excludeDirs:
+- .git
+- node_modules
