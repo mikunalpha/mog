@@ -19,21 +19,22 @@ func Register(rg *gin.RouterGroup) {
 // Get returns status of mog.
 func Get(c *gin.Context) {
 	var err error
+	var publishedCount int
 
 	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
 
 	accountStore := c.MustGet("store").(store.Store).Accounts()
 
+	postsStore := c.MustGet("store").(store.Store).Posts()
+
+	// Get numbers of admin
 	adminCount, err := accountStore.AdminCount()
 	if err != nil {
 		handlers.Abort(c, errors.DatabaseError.SetOriginError(err))
 		return
 	}
 
-	postsStore := c.MustGet("store").(store.Store).Posts()
-
-	var publishedCount int
-
+	// Get numbers of posts
 	if authInfo.Role == auth.Admin {
 		publishedCount, err = postsStore.Count()
 	} else {

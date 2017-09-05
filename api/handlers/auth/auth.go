@@ -18,6 +18,24 @@ func Register(rg *gin.RouterGroup) {
 	v1Router.POST("/auth/login", PostLogin)
 }
 
+// GetAuthInfo responses a account data according to token.
+func GetAuthInfo(c *gin.Context) {
+	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
+
+	// Populate basic authInfo.
+	ai := auth.AuthInfo{
+		Id:   authInfo.Id,
+		Role: authInfo.Role,
+	}
+
+	// Response authInfo.
+	c.JSON(200, struct {
+		Data auth.AuthInfo `json:"data"`
+	}{
+		ai,
+	})
+}
+
 // PostLogin set jwt token cookie of a valid account.
 func PostLogin(c *gin.Context) {
 	var err error
@@ -27,20 +45,22 @@ func PostLogin(c *gin.Context) {
 	err = c.BindJSON(&req)
 	if err != nil {
 		handlers.Abort(c, errors.ParseError.SetOriginError(err))
+		// delete cookie access token
 		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 	if req.Data == nil {
 		handlers.Abort(c, errors.ParamError)
+		// delete cookie access token
 		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
 
-	accountStore := c.MustGet("store").(store.Store).Accounts()
-
-	account, err := accountStore.FindByCredentials(req.Data.Username, req.Data.Password)
+	account, err := c.MustGet("store").(store.Store).
+		Accounts().FindByCredentials(req.Data.Username, req.Data.Password)
 	if err != nil {
 		handlers.Abort(c, errors.NotFoundError.SetOriginError(err).ReplaceMessage("Provided username or password was incorrect."))
+		// delete cookie access token
 		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
@@ -53,6 +73,7 @@ func PostLogin(c *gin.Context) {
 	encryptedToken, err := auth.EncryptToken(ai)
 	if err != nil {
 		handlers.Abort(c, errors.ServerError.SetOriginError(err))
+		// delete cookie access token
 		c.SetCookie("at", "", 0, "/", "", false, false)
 		return
 	}
@@ -60,34 +81,16 @@ func PostLogin(c *gin.Context) {
 	// Set encryptedToken into Cookie 90 days.
 	c.SetCookie("at", encryptedToken, 7776000, "/", "", false, false)
 
-	// Response encryptedToken.
+	// Response encrypted access token and role.
 	c.JSON(200, struct {
 		Data interface{} `json:"data"`
 	}{
 		struct {
 			AccessToken string `json:"access_token"`
 			Role        int64  `json:"role"`
-		}{encryptedToken, *account.Role},
+		}{
+			encryptedToken,
+			*account.Role,
+		},
 	})
-}
-
-// GetAuthInfo responses a account data according to token.
-func GetAuthInfo(c *gin.Context) {
-	authInfo := c.MustGet("authInfo").(*auth.AuthInfo)
-
-	if authInfo.Role < auth.Anonymous {
-		handlers.Abort(c, errors.AuthenticationError)
-		return
-	}
-
-	// Populate basic authInfo.
-	ai := auth.AuthInfo{
-		Id:   authInfo.Id,
-		Role: authInfo.Role,
-	}
-
-	// Response authInfo.
-	c.JSON(200, struct {
-		Data auth.AuthInfo `json:"data"`
-	}{ai})
 }

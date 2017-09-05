@@ -6,7 +6,7 @@ tmpvendor := ${PWD}/.vendor
 
 local:.gopath
 	mv $(vendor) $(tmpvendor) && ln -sf $(tmpvendor) ${PWD}/.gopath/src
-	env GOPATH=${PWD}/.gopath CGO_ENABLED=0 go build -o $(output)
+	env GOPATH=${PWD}/.gopath CGO_ENABLED=0 go build -v -o $(output)
 	mv $(tmpvendor) $(vendor) && ln -sf $(vendor) ${PWD}/.gopath/src
 
 init:
