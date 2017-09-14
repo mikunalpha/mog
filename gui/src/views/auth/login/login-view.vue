@@ -1,59 +1,60 @@
 <template>
   <div id="login-view">
     <template v-if="status && status.administered">
-    <div class="title">
-      Mog
-    </div>
+      <div class="title">
+        Mog
+      </div>
 
-    <template v-if="errorMessage !== ''">
-      <ui-alert
-        class="error-message"
-        type="error"
-        @dismiss="clearErrorMessage">
-        {{ errorMessage }}
-      </ui-alert>
-    </template>
+      <template v-if="errorMessage !== ''">
+        <ui-alert
+          class="error-message"
+          type="error"
+          @dismiss="clearErrorMessage">
+          {{ errorMessage }}
+        </ui-alert>
+      </template>
 
-    <div class="panel">
-      <ui-textbox
-        class="username"
-        type="text"
-        icon="person"
-        placeholder="Username"
-        v-model="credentials.username">
-      </ui-textbox>
+      <div class="panel">
+        <ui-textbox
+          class="username"
+          type="text"
+          icon="person"
+          placeholder="Username"
+          v-model="credentials.username">
+        </ui-textbox>
 
-      <ui-textbox
-        class="password"
-        type="password"
-        icon="lock"
-        placeholder="Password"
-        v-model="credentials.password">
-      </ui-textbox>
+        <ui-textbox
+          class="password"
+          type="password"
+          icon="lock"
+          placeholder="Password"
+          v-model="credentials.password">
+        </ui-textbox>
 
-      <br/>
+        <br/>
 
-      <div class="actions">
-        <div class="left">
+        <div class="actions">
+          <div class="left">
 
-        </div>
-        <div class="right">
-          <ui-button
-            type="primary"
-            color="primary"
-            :loading="isLogining"
-            @click="login">
-            Login
-          </ui-button>
+          </div>
+          <div class="right">
+            <ui-button
+              type="primary"
+              color="primary"
+              :loading="isLogining"
+              @click="login">
+              Login
+            </ui-button>
+          </div>
         </div>
       </div>
-    </div>
     </template>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import api from '@/api/auth'
 
 export default {
   data () {
@@ -67,40 +68,46 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      status: 'status'
+    })
+  },
+
   methods: {
     ...mapActions({
-      loginAccount: 'loginAccount',
       getAuthInfo: 'getAuthInfo'
     }),
 
     login () {
-      if (this.credentials.username.trim().length === 0) {
-        this.errorMessage = 'Username was required.'
+      let self = this
+
+      if (self.credentials.username.trim().length === 0) {
+        self.errorMessage = 'Username was required.'
         return
       } else {
-        this.credentials.username = this.credentials.username.trim()
+        self.credentials.username = self.credentials.username.trim()
       }
-      if (this.credentials.password.trim().length === 0) {
-        this.errorMessage = 'Password was required.'
+      if (self.credentials.password.trim().length === 0) {
+        self.errorMessage = 'Password was required.'
         return
       } else {
-        this.credentials.password = this.credentials.password.trim()
+        self.credentials.password = self.credentials.password.trim()
       }
 
-      this.isLogining = true
+      self.isLogining = true
 
-      this.loginAccount({
-        credentials: this.credentials,
-        success: (data) => {
-          this.clearErrorMessage()
-          this.getAuthInfo({})
-          this.$router.push({name: 'Blog.Posts'})
+      api.login({
+        credentials: self.credentials,
+        successCallback: (data) => {
+          self.clearErrorMessage()
+          self.getAuthInfo({})
+          self.$router.push({name: 'Blog.Posts'})
         },
-        error: (status, e) => {
-          this.isLogining = false
-          console.log(status)
+        errorCallback: ({status, error}) => {
+          self.isLogining = false
           if (status === 404) {
-            this.errorMessage = 'Provided username or password was incorrect.'
+            self.errorMessage = 'Provided username or password was incorrect.'
           }
         }
       })
@@ -109,12 +116,6 @@ export default {
     clearErrorMessage () {
       this.errorMessage = ''
     }
-  },
-
-  computed: {
-    ...mapGetters({
-      status: 'status'
-    })
   }
 }
 </script>
@@ -146,7 +147,7 @@ $panelWidth: 300px
     .actions
       display: flex
       > div
-        flex: 1
+        flex-grow: 1
       .right
         text-align: right
 </style>

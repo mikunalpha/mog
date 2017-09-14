@@ -49,7 +49,7 @@
             type="primary"
             color="primary"
             :loading="isSaving"
-            @click="send">
+            @click="createAdmin">
             Send
           </ui-button>
         </div>
@@ -60,6 +60,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import api from '@/api/account'
 
 export default {
   name: 'new-admin-view',
@@ -85,39 +86,39 @@ export default {
 
   methods: {
     ...mapActions({
-      createAdmin: 'createAdmin',
       getStatus: 'getStatus'
     }),
 
-    send () {
-      if (this.account.username.trim().length === 0) {
-        this.errorMessage = 'Username was required.'
+    createAdmin () {
+      let self = this
+
+      if (self.account.username.trim().length === 0) {
+        self.errorMessage = 'Username was required.'
         return
       } else {
-        this.account.username = this.account.username.trim()
+        self.account.username = self.account.username.trim()
       }
-      if (this.account.password.trim().length === 0) {
-        this.errorMessage = 'Password was required.'
+      if (self.account.password.trim().length === 0) {
+        self.errorMessage = 'Password was required.'
         return
       } else {
-        this.account.password = this.account.password.trim()
+        self.account.password = self.account.password.trim()
       }
-
-      if (this.account.password !== this.confirmPassword) {
+      if (self.account.password !== self.confirmPassword) {
         return
       }
 
-      this.isSaving = true
-      this.account.role = this.roles.Admin
+      self.isSaving = true
+      self.account.role = this.roles.Admin
 
-      this.createAdmin({
-        account: this.account,
-        success: (account) => {
-          this.$router.replace({name: 'Auth.Login'})
-          this.getStatus({})
+      api.createAccount({
+        newAccount: self.account,
+        successCallback: (data) => {
+          self.getStatus({})
+          self.$router.replace({name: 'Auth.Login'})
         },
-        error: (status, e) => {
-          this.isSaving = false
+        errorCallback: ({status, error}) => {
+          self.isSaving = false
         }
       })
     },
@@ -162,7 +163,7 @@ $panelWidth: 360px
     .actions
       display: flex
       > div
-        flex: 1
+        flex-grow: 1
       .right
         text-align: right
 </style>

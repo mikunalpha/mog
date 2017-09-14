@@ -7,12 +7,12 @@ html {
   font-size: 100%;
 }
 
-html, body {
+/*html, body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
   min-width: 1024px
-}
+}*/
 
 .material-icons {
   font-family: 'Material Icons';

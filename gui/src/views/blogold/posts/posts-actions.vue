@@ -63,6 +63,7 @@ export default {
   .ui-icon-button
     width: 36px
     height: 36px
+    vertical-align: top
 </style>
 
 <style lang="sass">

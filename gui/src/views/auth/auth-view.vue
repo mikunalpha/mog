@@ -1,7 +1,7 @@
 <template>
   <div id="auth-view">
-    <template v-if="status.gotAt !== null">
-    <router-view></router-view>
+    <template v-if="hasGotStatus">
+      <router-view></router-view>
     </template>
   </div>
 </template>
@@ -15,11 +15,11 @@ export default {
   computed: {
     ...mapGetters({
       status: 'status'
-    })
+    }),
+
+    hasGotStatus () {
+      return this.status.gotAt !== null
+    }
   }
 }
 </script>
-
-<style lang="sass" scoped>
-#auth-view
-</style>

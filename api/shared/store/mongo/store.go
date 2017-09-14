@@ -94,7 +94,7 @@ func getRetry(t uint32, c *mgo.Collection, q *mgo.Query, doc interface{}) error 
 		break
 	}
 
-	return nil
+	return err
 }
 
 // findRetry retries to find t times unit error is not 'EOF' problem.
@@ -114,7 +114,7 @@ func findRetry(t uint32, c *mgo.Collection, q *mgo.Query, doc interface{}) error
 		break
 	}
 
-	return nil
+	return err
 }
 
 // insertRetry retries to insert t times unit error is not 'EOF' problem.
@@ -134,7 +134,7 @@ func insertRetry(t uint32, c *mgo.Collection, docs ...interface{}) error {
 		break
 	}
 
-	return nil
+	return err
 }
 
 // updateRetry retries to update or insert t times unit error is not 'EOF' problem.
@@ -154,7 +154,7 @@ func updateRetry(t uint32, c *mgo.Collection, selector, changes interface{}) err
 		break
 	}
 
-	return nil
+	return err
 }
 
 // updateAllRetry retries to update or insert t times unit error is not 'EOF' problem.
@@ -174,7 +174,7 @@ func updateAllRetry(t uint32, c *mgo.Collection, selector, changes interface{}) 
 		break
 	}
 
-	return nil
+	return err
 }
 
 // upsertRetry retries to update or insert t times unit error is not 'EOF' problem.
@@ -194,7 +194,7 @@ func upsertRetry(t uint32, c *mgo.Collection, selector, update interface{}) erro
 		break
 	}
 
-	return nil
+	return err
 }
 
 // removeRetry retries to remove t times unit error is not 'EOF' problem.
@@ -214,7 +214,7 @@ func removeRetry(t uint32, c *mgo.Collection, selector interface{}) error {
 		break
 	}
 
-	return nil
+	return err
 }
 
 // removeAllRetry retries to remove t times unit error is not 'EOF' problem.
@@ -234,7 +234,7 @@ func removeAllRetry(t uint32, c *mgo.Collection, selector interface{}) error {
 		break
 	}
 
-	return nil
+	return err
 }
 
 // countRetry retries to count t times unit error is not 'EOF' problem.
@@ -255,7 +255,7 @@ func countRetry(t uint32, c *mgo.Collection, selector bson.M) (int, error) {
 		break
 	}
 
-	return count, nil
+	return count, err
 }
 
 // pipeGetRetry retries to find t times unit error is not 'EOF' problem.
@@ -275,5 +275,5 @@ func pipeGetRetry(t uint32, c *mgo.Collection, stages []bson.M, doc interface{})
 		break
 	}
 
-	return nil
+	return err
 }

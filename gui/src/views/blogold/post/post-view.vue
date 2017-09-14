@@ -71,6 +71,7 @@ export default {
             [{'header': [1, 2, 3, false]}],
             ['bold', 'italic', 'underline', 'strike'],
             ['link', 'image'],
+            [{'align': []}],
             ['blockquote', 'code-block'],
             ['clean']
           ],
@@ -166,15 +167,17 @@ export default {
   },
 
   created () {
-    // scroll to top
-    window.scrollTo(0, 0)
-
     this.getPost({
       id: this.$route.params.id,
       success: (post) => {
         // console.log(post.content)
       }
     })
+  },
+
+  mounted () {
+    // scroll to top
+    window.scrollTo(0, 0)
   },
 
   beforeDestroy () {

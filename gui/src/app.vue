@@ -12,32 +12,24 @@ export default {
 
   methods: {
     ...mapActions({
-      getStatus: 'getStatus',
-      getAuthInfo: 'getAuthInfo'
+      getAuthInfo: 'getAuthInfo',
+      getStatus: 'getStatus'
     })
   },
 
   created () {
-    console.log('app created')
-    this.getAuthInfo({
-      // success: (info) => {
-      //   console.log(info)
-      //   next()
-      // },
-      // error: (status, e) => {
-      //   console.log(status)
-      //   next()
-      // }
-    })
+    // Get authentication information from server and put into vuex authInfo.
+    this.getAuthInfo({})
 
+    // Get status from server and put into vuex status.
     this.getStatus({
-      success: (status) => {
+      successCallback: (status) => {
         if (status.administered === false) {
           this.$router.replace({name: 'Auth.NewAdmin'})
           return
         }
       },
-      error: (status, e) => {
+      errorCallback: ({status, error}) => {
         console.log(status)
         this.$router.replace({name: '500'})
       }
@@ -47,11 +39,19 @@ export default {
 </script>
 
 <style lang="sass">
-@import './assets/css/normalize.css'
-@import './assets/css/style.css'
-@import './assets/css/keen-ui.min.css'
+@import '~@/assets/css/normalize.css'
+@import '~@/assets/css/style.css'
+@import '~@/assets/sass/variables.sass'
+@import '~@/assets/css/keen-ui.min.css'
+
+html, body
+  min-height: 100vh
+  margin: 0
+  padding: 0
+  width: 100%
 
 #app
   min-height: 100vh
   font-family: 'Robot'
+  color: $fontColor
 </style>

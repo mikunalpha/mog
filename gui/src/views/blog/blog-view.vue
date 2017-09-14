@@ -1,68 +1,41 @@
 <template>
   <div id="blog-view">
-    <template v-if="status.gotAt !== null">
-    <header>
-      <ui-toolbar
-        type="colored"
-        textColor="white"
-        :raised="false"
-        :removeBrandDivider="false"
-        :removeNavIcon="false">
-        <div slot="icon">
-        </div>
+    <template v-if="!isReady">
+      <!-- Loading ... -->
+    </template>
+    <template v-else>
+      <header class="blog-view-header">
+        <router-link 
+          class="logo"
+          tag="a"
+          :to="{name: 'Blog.Posts', query: {page: 1}}">
+          Mog
+        </router-link>
+      </header>
 
-        <div slot="brand">
-          <span
-            class="brand"
-            @click="$router.push({name: 'Blog.Posts', query: {page: 1}})">
-            Mog
-          </span>
-        </div>
-
-        <div slot="actions">
-          <router-view
-            ref="Actions"
-            name="actions"
-            @channel="toDefault">
-          </router-view>
-        </div>
-      </ui-toolbar>
-    </header>
-
-    <router-view
-      ref="Default"
-      name="default"
-      @channel="toActions">
-    </router-view>
+      <keep-alive>
+          <router-view v-if="$route.meta.keepAlive"></router-view>
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive"></router-view>
     </template>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import hljs from 'highlight.js'
-window.hljs = hljs
-console.log('window.hljs')
 
 export default {
+  name: 'blog-view',
+
   computed: {
     ...mapGetters({
       status: 'status',
       authInfo: 'authInfo'
-    })
-  },
+    }),
 
-  methods: {
-    toDefault (payload) {
-      this.$refs.Default.in(payload)
-    },
-    toActions (payload) {
-      this.$refs.Actions.in(payload)
+    isReady () {
+      return (this.status.gotAt !== null) && (this.authInfo.gotAt !== null)
     }
-  },
-
-  created () {
-    console.log('blog created')
   }
 }
 </script>
@@ -72,16 +45,22 @@ export default {
 
 #blog-view
   position: relative
-  > header
-    padding: 0 20px
-    background-color: $primaryColor
-    .ui-toolbar
-      margin: 0 auto
-      max-width: 960px
-      height: 60px
-      .brand
-        padding: 0 10px
-        cursor: pointer
-        user-select: none
-        font-size: 110%
+  padding-bottom: 1px
+  min-height: 100vh
+  background-color: darken($backgroundColor, 5%)
+
+  .blog-view-header
+    padding: 20px 0
+    
+  .blog-view-header .logo
+    display: block
+    margin: 0 auto
+    width: 100px
+    font-size: 28px
+    font-weight: bold
+    text-align: center
+    &, &:link, &:visited, &:hover, &:active
+      color: $fontColor
+      text-decoration: none
+      cursor: pointer
 </style>

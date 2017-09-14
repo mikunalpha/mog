@@ -1,7 +1,7 @@
+import api from '@/api/posts'
 import axios from 'axios'
-import * as types from '../../mutations'
 import cookies from 'browser-cookies'
-import querystring from 'querystring'
+import * as types from '@/store/mutations'
 
 // initial state
 const state = {
@@ -23,32 +23,17 @@ const getters = {
 
 // actions
 const actions = {
-  getPosts ({ commit }, {options, success, error}) {
-    axios.get('/mogapis/v1/posts?' + querystring.stringify(options), {
-      headers: {
-        'Authorization': 'Bearer ' + cookies.get('at')
-      }
-    })
-    .then(function (response) {
-      commit(types.RECEIVE_POSTS, {posts: response.data.data})
+  getPosts ({ commit }, {options, successCallback, errorCallback}) {
+    api.fetchPosts({
+      options,
+      successCallback: (posts) => {
+        commit(types.RECEIVE_POSTS, {posts})
 
-      if (typeof success === 'function') {
-        success(response.data.data)
-      }
-    }).catch(function (e) {
-      console.log(e)
-      if (typeof error === 'function') {
-        if (e.response.status === 504) {
-          return error(
-            504,
-            {
-              code: 'ServerError',
-              message: 'Can not connect to server.'
-            }
-          )
+        if (typeof success === 'function') {
+          successCallback(posts)
         }
-        error(e.response.status, e.response.data.error)
-      }
+      },
+      errorCallback
     })
   },
 

@@ -11,42 +11,57 @@
       </div>
     </template>
     <template v-else>
-      <posts-list
-        :posts="shownPosts">
-      </posts-list>
+      <panel class="top-panel">
+        <template slot="right">
+          <ui-icon-button
+            class="action-button"
+            type="secondary"
+            color="default"
+            icon="add"
+            @click="$router.push({name: 'Admin.Blog.NewPost'})">
+          </ui-icon-button>
+        </template>
+      </panel>
 
-      <div class="pagination">
-        <ui-icon-button
-          icon="keyboard_arrow_left"
-          size="large"
-          type="secondary"
-          :disabled="(currentPage == 1) ? true : false"
-          tooltip="Previous Page"
-          @click="changeToPage(currentPage - 1)">
-        </ui-icon-button>
-        <span class="current-page">
-          {{ currentPage }}
-        </span>
-        <ui-icon-button
-          icon="keyboard_arrow_right"
-          size="large"
-          type="secondary"
-          :disabled="(posts.length <= perPagePostsNumber) ? true : false"
-          tooltip="Next Page"
-          @click="changeToPage(currentPage + 1)">
-        </ui-icon-button>
+      <div class="scroll-wrap">
+        <posts-list
+          :posts="shownPosts"
+          @deletePost="deletePost">
+        </posts-list>
+
+        <div class="pagination">
+          <ui-icon-button
+            icon="keyboard_arrow_left"
+            size="large"
+            type="secondary"
+            :disabled="(currentPage == 1) ? true : false"
+            tooltip="Previous Page"
+            @click="changeToPage(currentPage - 1)">
+          </ui-icon-button>
+          <span class="current-page">
+            {{ currentPage }}
+          </span>
+          <ui-icon-button
+            icon="keyboard_arrow_right"
+            size="large"
+            type="secondary"
+            :disabled="(posts.length <= perPagePostsNumber) ? true : false"
+            tooltip="Next Page"
+            @click="changeToPage(currentPage + 1)">
+          </ui-icon-button>
+        </div>
       </div>
     </template>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import api from '@/api/posts'
-import PostsList from '@/components/blog/posts-list'
+import Panel from '@/components/admin/panel'
+import PostsList from '@/components/admin/posts-list'
 
 export default {
-  name: 'posts-view',
-
   props: {
     query: {
       type: Object,
@@ -58,7 +73,7 @@ export default {
     return {
       gotAt: null,
       posts: [],
-      perPagePostsNumber: 3
+      perPagePostsNumber: 5
     }
   },
 
@@ -87,6 +102,7 @@ export default {
   },
 
   components: {
+    Panel,
     PostsList
   },
 
@@ -101,6 +117,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      enableKeepAlive: 'enableKeepAlive'
+    }),
+
     goToPage (n) {
       if (n <= 0) {
         return
@@ -124,7 +144,7 @@ export default {
               self.posts[i],
               'routerLink',
               {
-                name: 'Blog.Post',
+                name: 'Admin.Blog.Post',
                 params: {
                   id: self.posts[i].id
                 }
@@ -157,6 +177,22 @@ export default {
           }
         }
       )
+    },
+
+    deletePost ({id, post}) {
+      let self = this
+
+      api.deletePost({
+        id,
+        successCallback: (post) => {
+          // reload
+          self.goToPage(self.currentPage)
+        },
+        errorCallback: ({status, error}) => {
+          console.log(status)
+          console.log(error)
+        }
+      })
     }
   },
 
@@ -178,6 +214,10 @@ export default {
       return
     }
     self.goToPage(self.currentPage)
+  },
+
+  mounted () {
+    this.enableKeepAlive()
   }
 }
 </script>
@@ -185,16 +225,39 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/sass/variables.sass'
 
+$scrollWrapPaddingTop: $adminLogoHeight - 10px
+
 #posts-view
+  position: relative
+  height: 100%
+  max-height: 100vh
+
   .extra-info
     padding-top: 50px
     font-size: 24px
     color: lighten($fontColor, 20%)    
     text-align: center
 
+  .top-panel
+    position: absolute
+    top: 0
+    left: 0
+    z-index: 99
+    width: 100%
+    box-shadow: 0 -1px 0 darken($backgroundColor, 10%) inset
+
+    .action-button
+      margin-right: 10px
+
+  .scroll-wrap
+    padding-top: $scrollWrapPaddingTop
+    height: 100vh
+    max-height: 100vh
+    overflow-y: auto
+
   .pagination
-    margin-top: 50px
-    margin-bottom: 30px
+    margin-top: 20px
+    margin-bottom: 20px
     text-align: center
     
     .current-page

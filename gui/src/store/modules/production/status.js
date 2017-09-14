@@ -1,6 +1,5 @@
-import axios from 'axios'
-import * as types from '../../mutations'
-import cookies from 'browser-cookies'
+import api from '@/api/status'
+import * as types from '@/store/mutations'
 
 // initial state
 const state = {
@@ -13,51 +12,36 @@ const state = {
       }
     }
   },
-  scroll: {
-    x: 0,
-    y: 0
-  }
+  keepAlive: true
 }
 
 // getters
 const getters = {
   status: state => state.status,
-  scroll: state => state.scroll
+  keepAlive: state => state.keepAlive
 }
 
 // actions
 const actions = {
-  getStatus ({ commit }, {success, error}) {
-    axios.get('/mogapis/v1/status', {
-      headers: {
-        'Authorization': 'Bearer ' + cookies.get('at')
-      }
-    })
-    .then(function (response) {
-      commit(types.RECEIVE_STATUS, {status: response.data.data})
+  getStatus ({commit}, {successCallback, errorCallback}) {
+    api.fetchStatus({
+      successCallback: (status) => {
+        commit(types.RECEIVE_STATUS, {status})
 
-      if (typeof success === 'function') {
-        success(response.data.data)
-      }
-    }).catch(function (e) {
-      console.log(e)
-      if (typeof error === 'function') {
-        if (e.response.status === 504) {
-          return error(
-            504,
-            {
-              code: 'ServerError',
-              message: 'Can not connect to server.'
-            }
-          )
+        if (typeof success === 'function') {
+          successCallback(status)
         }
-        error(e.response.status, e.response.data.error)
-      }
+      },
+      errorCallback
     })
   },
 
-  saveScroll ({ commit }, {x, y}) {
-    commit(types.RECEIVE_SCROLL, {x, y})
+  enableKeepAlive ({commit}) {
+    commit(types.ENABLE_KEEP_ALIVE)
+  },
+
+  disableKeepAlive ({commit}) {
+    commit(types.DISABLE_KEEP_ALIVE)
   }
 }
 
@@ -71,6 +55,14 @@ const mutations = {
   [types.RECEIVE_SCROLL] (state, { x, y }) {
     state.scroll.x = x
     state.scroll.y = y
+  },
+
+  [types.ENABLE_KEEP_ALIVE] (state) {
+    state.keepAlive = true
+  },
+
+  [types.DISABLE_KEEP_ALIVE] (state) {
+    state.keepAlive = false
   }
 }
 
