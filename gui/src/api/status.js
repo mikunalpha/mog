@@ -14,7 +14,7 @@ let fetchStatus = ({successCallback, errorCallback}) => {
     }
   })
   .catch((e) => {
-    if (typeof error === 'function') {
+    if (typeof errorCallback === 'function') {
       if (typeof e.response === 'undefined' || e.response.status === 504) {
         return errorCallback({
           status: 500,

@@ -22,7 +22,7 @@ func SetTokenSecretKey(k string) {
 	tokenSecretKey = k
 }
 
-// AuthInfo
+// AuthInfo contains account's Id and Role information.
 type AuthInfo struct {
 	jwt.StandardClaims
 	Id   string `json:"id,omitempty"`

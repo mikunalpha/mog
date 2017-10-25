@@ -1,4 +1,9 @@
 package: .
+ignore:
+- github.com/mikunalpha/mog/api
+excludeDirs:
+- .git
+- node_modules
 import:
 - package: github.com/PuerkitoBio/goquery
 - package: github.com/dgrijalva/jwt-go
@@ -28,12 +33,6 @@ import:
 - package: gopkg.in/mgo.v2
   subpackages:
   - bson
-testImport:
 - package: github.com/stretchr/testify
   subpackages:
   - assert
-ignore:
-- github.com/mikunalpha/mog/api
-excludeDirs:
-- .git
-- node_modules

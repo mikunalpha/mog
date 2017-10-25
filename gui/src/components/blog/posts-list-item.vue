@@ -35,7 +35,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @import '~@/assets/sass/variables.sass'
 
 .posts-list-item
@@ -87,4 +87,15 @@ export default {
     text-align: center
   .ql-align-justify
     text-align: justify
+</style>
+
+<style lang="sass">
+@import '~@/assets/sass/variables.sass'
+
+.posts-list-item
+  .ql-syntax
+    margin: 5px 0
+    padding: 10px
+    background-color: darken($backgroundColor, 5%)
+    color: $fontColor
 </style>

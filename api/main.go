@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/mikunalpha/mog/api/router"
+	"github.com/mikunalpha/mog/api/services/auth"
 	"github.com/mikunalpha/mog/api/services/store"
 	"github.com/mikunalpha/mog/api/shared/utils"
 )
@@ -16,6 +17,12 @@ func main() {
 
 	// Initialize database store.
 	err = store.Init()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = auth.Init()
 	if err != nil {
 		log.Println(err)
 		return

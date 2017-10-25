@@ -31,6 +31,6 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .posts-list
 </style>

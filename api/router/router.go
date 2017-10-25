@@ -41,8 +41,8 @@ func methodOverride(next http.Handler) http.Handler {
 	})
 }
 
-// Start begins the routing serivce.
-func Start() {
+// Prepare sets up the routing rules.
+func Prepare() {
 	_router = gin.New()
 	_router.NoRoute(middlewares.Notfound())
 	_router.NoMethod(middlewares.Notfound())
@@ -65,6 +65,11 @@ func Start() {
 	for _, r := range _registers {
 		r(mogApisRouter)
 	}
+}
+
+// Start begins the routing serivce.
+func Start() {
+	Prepare()
 
 	// Deal with method override before requests go into gin routing
 	handler := methodOverride(_router)
